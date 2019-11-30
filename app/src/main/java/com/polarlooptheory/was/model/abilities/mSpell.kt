@@ -15,6 +15,7 @@ package com.polarlooptheory.was.model.abilities
  * @property range Spell's range
  * @property ritual Can the spell be casted as a ritual
  * @property visible Visibility(is it visible for all players)
+ * @property custom Is it made custom for scenario
  */
 class mSpell (
     var name: String = "",
@@ -29,5 +30,6 @@ class mSpell (
     var material: String? = null,
     var range: String? = null,
     var ritual: Boolean = false,
-    var visible: Boolean = false
+    var visible: Boolean = false,
+    var custom: Boolean = false
 )

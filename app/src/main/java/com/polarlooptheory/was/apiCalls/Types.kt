@@ -23,10 +23,12 @@ import org.json.JSONObject
  * Object for handling types
  */
 object Types {
-    val endpoint = "${Settings.server_address}api/v1/scenario"
+    private const val endpoint = "${Settings.server_address}api/v1/scenario"
     //region Conditions
     /**
      * Receives a list of the [conditions][mCondition] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [conditions][mCondition] matching the name
      * @return list of conditions if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -51,8 +53,11 @@ object Types {
                         val tmpCondition = mCondition(
                             name = obj.getString("name"),
                             description = obj.getString("description"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.conditions.containsKey(tmpCondition.name))
+                            Scenario.loadedResources.conditions[tmpCondition.name] = tmpCondition
                         tmplist.add(tmpCondition)
                     }
                     list = tmplist
@@ -68,6 +73,8 @@ object Types {
 
     /**
      * Creates a [condition][mCondition] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [condition][mCondition] into
      * @param name Name/Title of the [condition][mCondition]
      * @param description [Condition][mCondition]'s description
@@ -99,6 +106,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpCondition = mCondition(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpCondition.description = description
+                        if (visible != null)
+                            tmpCondition.visible = visible
+                        Scenario.loadedResources.conditions[tmpCondition.name] = tmpCondition
                         success = true
                     }
                     is Result.Failure -> {
@@ -116,6 +131,8 @@ object Types {
 
     /**
      * Deletes a [condition][mCondition] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [condition][mCondition] is deleted
      * @param name Name of the [condition][mCondition] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -128,6 +145,7 @@ object Types {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.conditions.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -147,6 +165,8 @@ object Types {
      * Patch a [condition][mCondition] in the [scenario]
      *
      * It cannot change the name of the [condition][mCondition]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [condition][mCondition] will be patched
      * @param name Name of the [condition][mCondition] to patch
      * @param description Description of the [condition][mCondition]
@@ -178,6 +198,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpCondition = mCondition(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpCondition.description = description
+                        if (visible != null)
+                            tmpCondition.visible = visible
+                        Scenario.loadedResources.conditions[tmpCondition.name] = tmpCondition
                         success = true
                     }
                     is Result.Failure -> {
@@ -196,6 +224,8 @@ object Types {
     //region DamageTypes
     /**
      * Receives a list of the [damage types][mDamageType] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [damage types][mDamageType] matching the name
      * @return list of DamageTypes if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -220,8 +250,11 @@ object Types {
                         val tmpDamageType = mDamageType(
                             name = obj.getString("name"),
                             description = obj.getString("description"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.damageTypes.containsKey(tmpDamageType.name))
+                            Scenario.loadedResources.damageTypes[tmpDamageType.name] = tmpDamageType
                         tmplist.add(tmpDamageType)
                     }
                     list = tmplist
@@ -237,6 +270,8 @@ object Types {
 
     /**
      * Creates a [damage type][mDamageType] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [damage type][mDamageType] into
      * @param name Name/Title of the [damage type][mDamageType]
      * @param description [Damage type][mDamageType]'s description
@@ -268,6 +303,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpDamageType = mDamageType(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpDamageType.description = description
+                        if (visible != null)
+                            tmpDamageType.visible = visible
+                        Scenario.loadedResources.damageTypes[tmpDamageType.name] = tmpDamageType
                         success = true
                     }
                     is Result.Failure -> {
@@ -285,6 +328,8 @@ object Types {
 
     /**
      * Deletes a [damage type][mDamageType] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [damage type][mDamageType] is deleted
      * @param name Name of the [damage type][mDamageType] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -297,6 +342,7 @@ object Types {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.damageTypes.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -316,6 +362,8 @@ object Types {
      * Patch a [damage type][mDamageType] in the [scenario]
      *
      * It cannot change the name of the [damage type][mDamageType]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [damage type][mDamageType] will be patched
      * @param name Name of the [damage type][mDamageType] to patch
      * @param description Description of the [damage type][mDamageType]
@@ -347,6 +395,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpDamageType = mDamageType(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpDamageType.description = description
+                        if (visible != null)
+                            tmpDamageType.visible = visible
+                        Scenario.loadedResources.damageTypes[tmpDamageType.name] = tmpDamageType
                         success = true
                     }
                     is Result.Failure -> {
@@ -365,6 +421,8 @@ object Types {
     //region MagicSchools
     /**
      * Receives a list of the [magic schools][mMagicSchool] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [magic schools][mMagicSchool] matching the name
      * @return list of magic schools if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -389,8 +447,11 @@ object Types {
                         val tmpMagicSchool = mMagicSchool(
                             name = obj.getString("name"),
                             description = obj.getString("description"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.magicSchools.containsKey(tmpMagicSchool.name))
+                            Scenario.loadedResources.magicSchools[tmpMagicSchool.name] = tmpMagicSchool
                         tmplist.add(tmpMagicSchool)
                     }
                     list = tmplist
@@ -406,6 +467,8 @@ object Types {
 
     /**
      * Creates a [magic school][mMagicSchool] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [magic school][mMagicSchool] into
      * @param name Name/Title of the [magic school][mMagicSchool]
      * @param description [MagicSchool][mMagicSchool]'s description
@@ -437,6 +500,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpMagicSchool = mMagicSchool(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpMagicSchool.description = description
+                        if (visible != null)
+                            tmpMagicSchool.visible = visible
+                        Scenario.loadedResources.magicSchools[tmpMagicSchool.name] = tmpMagicSchool
                         success = true
                     }
                     is Result.Failure -> {
@@ -454,6 +525,8 @@ object Types {
 
     /**
      * Deletes a [magic school][mMagicSchool] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [magic school][mMagicSchool] is deleted
      * @param name Name of the [magic school][mMagicSchool] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -466,6 +539,7 @@ object Types {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.magicSchools.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -485,6 +559,8 @@ object Types {
      * Patch a [magic school][mMagicSchool] in the [scenario]
      *
      * It cannot change the name of the [magic school][mMagicSchool]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [magic school][mMagicSchool] will be patched
      * @param name Name of the [magic school][mMagicSchool] to patch
      * @param description Description of the [magic school][mMagicSchool]
@@ -516,6 +592,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpMagicSchool = mMagicSchool(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpMagicSchool.description = description
+                        if (visible != null)
+                            tmpMagicSchool.visible = visible
+                        Scenario.loadedResources.magicSchools[tmpMagicSchool.name] = tmpMagicSchool
                         success = true
                     }
                     is Result.Failure -> {
@@ -534,6 +618,8 @@ object Types {
     //region WeaponProperties
     /**
      * Receives a list of the [weapon properties][mWeaponProperty] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [weapon properties][mWeaponProperty] matching the name
      * @return list of weapon properties if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -561,8 +647,11 @@ object Types {
                         val tmpWeaponProperty = mWeaponProperty(
                             name = obj.getString("name"),
                             description = obj.getString("description"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.weaponProperties.containsKey(tmpWeaponProperty.name))
+                            Scenario.loadedResources.weaponProperties[tmpWeaponProperty.name] = tmpWeaponProperty
                         tmplist.add(tmpWeaponProperty)
                     }
                     list = tmplist
@@ -578,6 +667,8 @@ object Types {
 
     /**
      * Creates a [weapon property][mWeaponProperty] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [weapon property][mWeaponProperty] into
      * @param name Name/Title of the [weapon property][mWeaponProperty]
      * @param description [WeaponProperty][mWeaponProperty]'s description
@@ -609,6 +700,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpWeaponProperty = mWeaponProperty(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpWeaponProperty.description = description
+                        if (visible != null)
+                            tmpWeaponProperty.visible = visible
+                        Scenario.loadedResources.weaponProperties[tmpWeaponProperty.name] = tmpWeaponProperty
                         success = true
                     }
                     is Result.Failure -> {
@@ -626,6 +725,8 @@ object Types {
 
     /**
      * Deletes a [weapon property][mWeaponProperty] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [weapon property][mWeaponProperty] is deleted
      * @param name Name of the [weapon property][mWeaponProperty] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -638,6 +739,7 @@ object Types {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.weaponProperties.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -657,6 +759,8 @@ object Types {
      * Patch a [weapon property][mWeaponProperty] in the [scenario]
      *
      * It cannot change the name of the [weapon property][mWeaponProperty]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [weapon property][mWeaponProperty] will be patched
      * @param name Name of the [weapon property][mWeaponProperty] to patch
      * @param description Description of the [weapon property][mWeaponProperty]
@@ -688,6 +792,14 @@ object Types {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpWeaponProperty = mWeaponProperty(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpWeaponProperty.description = description
+                        if (visible != null)
+                            tmpWeaponProperty.visible = visible
+                        Scenario.loadedResources.weaponProperties[tmpWeaponProperty.name] = tmpWeaponProperty
                         success = true
                     }
                     is Result.Failure -> {

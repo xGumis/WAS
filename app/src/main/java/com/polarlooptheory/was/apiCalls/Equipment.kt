@@ -20,10 +20,12 @@ import org.json.JSONObject
  * Object for handling equipment
  */
 object Equipment {
-    val endpoint = "${Settings.server_address}api/v1/scenario/"
+    private const val endpoint = "${Settings.server_address}api/v1/scenario/"
     //region Armors
     /**
      * Receives a list of the [armors][mArmor] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [armors][mArmor] matching the name
      * @return list of armors if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -56,8 +58,11 @@ object Equipment {
                             stealthDisadvantage = obj.getBoolean("stealthDisadvantage"),
                             strMinimum = obj.getInt("strMinimum"),
                             weight = obj.getInt("weight"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.armors.containsKey(tmpArmor.name))
+                            Scenario.loadedResources.armors[tmpArmor.name] = tmpArmor
                         tmplist.add(tmpArmor)
                     }
                     list = tmplist
@@ -73,6 +78,8 @@ object Equipment {
 
     /**
      * Creates a [armor][mArmor] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [armor][mArmor] into
      * @param name Name/Title of the [armor][mArmor]
      * @param ac_base [Armor][mArmor]'s base [armor class][mArmor.ArmorClass]
@@ -89,7 +96,7 @@ object Equipment {
         scenario: mScenario,
         name: String,
         ac_base: Int? = null,
-        ac_dexBonus: Boolean?,
+        ac_dexBonus: Boolean? = null,
         ac_maxBonus: Int? = null,
         cost: String? = null,
         stealthDisadvantage: Boolean? = null,
@@ -130,6 +137,25 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpArmor = mArmor(
+                            name = name,
+                            custom = true,
+                            armorClass = mArmor.ArmorClass(
+                                base = ac_base ?: 0,
+                                dexBonus = ac_dexBonus ?: false,
+                                maxBonus = ac_maxBonus ?: 0
+                            ))
+                        if (cost != null)
+                            tmpArmor.cost = cost
+                        if (stealthDisadvantage != null)
+                            tmpArmor.stealthDisadvantage = stealthDisadvantage
+                        if (strMinimum != null)
+                            tmpArmor.strMinimum = strMinimum
+                        if (weight != null)
+                            tmpArmor.weight = weight
+                        if (visible != null)
+                            tmpArmor.visible = visible
+                        Scenario.loadedResources.armors[tmpArmor.name] = tmpArmor
                         success = true
                     }
                     is Result.Failure -> {
@@ -158,6 +184,8 @@ object Equipment {
 
     /**
      * Deletes a [armor][mArmor] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [armor][mArmor] is deleted
      * @param name Name of the [armor][mArmor] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -170,6 +198,7 @@ object Equipment {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.armors.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -189,6 +218,8 @@ object Equipment {
      * Patch a [armor][mArmor] in the [scenario]
      *
      * It cannot change the name of the [armor][mArmor]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [armor][mArmor] will be patched
      * @param name Name of the [armor][mArmor] to patch
      * @param ac_base [Armor][mArmor]'s base [armor class][mArmor.ArmorClass]
@@ -205,7 +236,7 @@ object Equipment {
         scenario: mScenario,
         name: String,
         ac_base: Int? = null,
-        ac_dexBonus: Boolean?,
+        ac_dexBonus: Boolean? = null,
         ac_maxBonus: Int? = null,
         cost: String? = null,
         stealthDisadvantage: Boolean? = null,
@@ -245,6 +276,25 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpArmor = mArmor(
+                            name = name,
+                            custom = true,
+                            armorClass = mArmor.ArmorClass(
+                                base = ac_base ?: 0,
+                                dexBonus = ac_dexBonus ?: false,
+                                maxBonus = ac_maxBonus ?: 0
+                            ))
+                        if (cost != null)
+                            tmpArmor.cost = cost
+                        if (stealthDisadvantage != null)
+                            tmpArmor.stealthDisadvantage = stealthDisadvantage
+                        if (strMinimum != null)
+                            tmpArmor.strMinimum = strMinimum
+                        if (weight != null)
+                            tmpArmor.weight = weight
+                        if (visible != null)
+                            tmpArmor.visible = visible
+                        Scenario.loadedResources.armors[tmpArmor.name] = tmpArmor
                         success = true
                     }
                     is Result.Failure -> {
@@ -273,10 +323,12 @@ object Equipment {
     //endregion
     //region Gears
     /**
-     * Receives a list of the [gears][mGear] in the [scenario]
+     * Receives a list of the [gear][mGear] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
-     * @param name Search for [gears][mGear] matching the name
-     * @return list of gears if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
+     * @param name Search for [gear][mGear] matching the name
+     * @return list of gear if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
      */
     suspend fun getGears(scenario: mScenario, name: String? = null): List<mGear>? {
         val endpoint = "$endpoint/${scenario.scenarioKey}/gear"
@@ -300,8 +352,11 @@ object Equipment {
                             description = obj.getString("description"),
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.gear.containsKey(tmpGear.name))
+                            Scenario.loadedResources.gear[tmpGear.name] = tmpGear
                         tmplist.add(tmpGear)
                     }
                     list = tmplist
@@ -317,6 +372,8 @@ object Equipment {
 
     /**
      * Creates a [gear][mGear] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [gear][mGear] into
      * @param name Name/Title of the [gear][mGear]
      * @param description [Gear][mGear]'s description
@@ -356,6 +413,18 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpGear = mGear(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpGear.description = description
+                        if (cost != null)
+                            tmpGear.cost = cost
+                        if (weight != null)
+                            tmpGear.weight = weight
+                        if (visible != null)
+                            tmpGear.visible = visible
+                        Scenario.loadedResources.gear[tmpGear.name] = tmpGear
                         success = true
                     }
                     is Result.Failure -> {
@@ -373,6 +442,8 @@ object Equipment {
 
     /**
      * Deletes a [gear][mGear] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [gear][mGear] is deleted
      * @param name Name of the [gear][mGear] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -385,6 +456,7 @@ object Equipment {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.gear.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -404,6 +476,8 @@ object Equipment {
      * Patch a [gear][mGear] in the [scenario]
      *
      * It cannot change the name of the [gear][mGear]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [gear][mGear] will be patched
      * @param name Name of the [gear][mGear] to patch
      * @param description Description of the [gear][mGear]
@@ -443,6 +517,18 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpGear = mGear(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpGear.description = description
+                        if (cost != null)
+                            tmpGear.cost = cost
+                        if (weight != null)
+                            tmpGear.weight = weight
+                        if (visible != null)
+                            tmpGear.visible = visible
+                        Scenario.loadedResources.gear[tmpGear.name] = tmpGear
                         success = true
                     }
                     is Result.Failure -> {
@@ -461,6 +547,8 @@ object Equipment {
     //region Tools
     /**
      * Receives a list of the [tools][mTool] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [tools][mTool] matching the name
      * @return list of tools if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -488,8 +576,11 @@ object Equipment {
                             category = obj.getString("category"),
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.tools.containsKey(tmpTool.name))
+                            Scenario.loadedResources.tools[tmpTool.name] = tmpTool
                         tmplist.add(tmpTool)
                     }
                     list = tmplist
@@ -505,6 +596,8 @@ object Equipment {
 
     /**
      * Creates a [tool][mTool] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [tool][mTool] into
      * @param name Name/Title of the [tool][mTool]
      * @param description [Tool][mTool]'s description
@@ -548,6 +641,20 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpTool = mTool(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpTool.description = description
+                        if (category != null)
+                            tmpTool.category = category
+                        if (cost != null)
+                            tmpTool.cost = cost
+                        if (weight != null)
+                            tmpTool.weight = weight
+                        if (visible != null)
+                            tmpTool.visible = visible
+                        Scenario.loadedResources.tools[tmpTool.name] = tmpTool
                         success = true
                     }
                     is Result.Failure -> {
@@ -565,6 +672,8 @@ object Equipment {
 
     /**
      * Deletes a [tool][mTool] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [tool][mTool] is deleted
      * @param name Name of the [tool][mTool] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -577,6 +686,7 @@ object Equipment {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.tools.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -596,6 +706,8 @@ object Equipment {
      * Patch a [tool][mTool] in the [scenario]
      *
      * It cannot change the name of the [tool][mTool]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [tool][mTool] will be patched
      * @param name Name of the [tool][mTool] to patch
      * @param description Description of the [tool][mTool]
@@ -639,6 +751,20 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpTool = mTool(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpTool.description = description
+                        if (category != null)
+                            tmpTool.category = category
+                        if (cost != null)
+                            tmpTool.cost = cost
+                        if (weight != null)
+                            tmpTool.weight = weight
+                        if (visible != null)
+                            tmpTool.visible = visible
+                        Scenario.loadedResources.tools[tmpTool.name] = tmpTool
                         success = true
                     }
                     is Result.Failure -> {
@@ -658,6 +784,8 @@ object Equipment {
     //region Vehicles
     /**
      * Receives a list of the [vehicles][mVehicle] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [vehicles][mVehicle] matching the name
      * @return list of vehicles if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -684,8 +812,11 @@ object Equipment {
                             description = obj.getString("description"),
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.vehicles.containsKey(tmpVehicle.name))
+                            Scenario.loadedResources.vehicles[tmpVehicle.name] = tmpVehicle
                         tmplist.add(tmpVehicle)
                     }
                     list = tmplist
@@ -701,6 +832,8 @@ object Equipment {
 
     /**
      * Creates a [vehicle][mVehicle] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [vehicle][mVehicle] into
      * @param name Name/Title of the [vehicle][mVehicle]
      * @param description [Vehicle][mVehicle]'s description
@@ -740,6 +873,18 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpVehicle = mVehicle(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpVehicle.description = description
+                        if (cost != null)
+                            tmpVehicle.cost = cost
+                        if (weight != null)
+                            tmpVehicle.weight = weight
+                        if (visible != null)
+                            tmpVehicle.visible = visible
+                        Scenario.loadedResources.vehicles[tmpVehicle.name] = tmpVehicle
                         success = true
                     }
                     is Result.Failure -> {
@@ -757,6 +902,8 @@ object Equipment {
 
     /**
      * Deletes a [vehicle][mVehicle] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [vehicle][mVehicle] is deleted
      * @param name Name of the [vehicle][mVehicle] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -769,6 +916,7 @@ object Equipment {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.vehicles.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -788,6 +936,8 @@ object Equipment {
      * Patch a [vehicle][mVehicle] in the [scenario]
      *
      * It cannot change the name of the [vehicle][mVehicle]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [vehicle][mVehicle] will be patched
      * @param name Name of the [vehicle][mVehicle] to patch
      * @param description Description of the [vehicle][mVehicle]
@@ -827,6 +977,18 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpVehicle = mVehicle(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpVehicle.description = description
+                        if (cost != null)
+                            tmpVehicle.cost = cost
+                        if (weight != null)
+                            tmpVehicle.weight = weight
+                        if (visible != null)
+                            tmpVehicle.visible = visible
+                        Scenario.loadedResources.vehicles[tmpVehicle.name] = tmpVehicle
                         success = true
                     }
                     is Result.Failure -> {
@@ -846,6 +1008,8 @@ object Equipment {
 
     /**
      * Receives a list of the [weapons][mWeapon] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario Chosen [scenario][mScenario]
      * @param name Search for [weapons][mWeapon] matching the name
      * @return list of weapons if ended with success or null if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -883,10 +1047,13 @@ object Equipment {
                                     "properties"
                                 ).getString(it)
                             },
-                            weaponRange = obj.getInt("weaponRange"),
+                            weaponRange = obj.getString("weaponRange"),
                             weight = obj.getInt("weight"),
-                            visible = obj.getBoolean("visible")
+                            visible = obj.getBoolean("visible"),
+                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
                         )
+                        if(!Scenario.loadedResources.weapons.containsKey(tmpWeapon.name))
+                            Scenario.loadedResources.weapons[tmpWeapon.name] = tmpWeapon
                         tmplist.add(tmpWeapon)
                     }
                     list = tmplist
@@ -902,6 +1069,8 @@ object Equipment {
 
     /**
      * Creates a [weapon][mWeapon] in the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] to put the [weapon][mWeapon] into
      * @param name Name/Title of the [weapon][mWeapon]
      * @param damageType [Weapon][mWeapon]'s [damage type][com.polarlooptheory.was.model.types.mDamageType] (must match existing damage type in the [scenario])
@@ -963,8 +1132,7 @@ object Equipment {
             if (normalThrowRange != null)
                 json.put("normalThrowRange", normalThrowRange)
             val props = JSONArray()
-            if (properties != null)
-                properties.forEach { props.put(it) }
+            properties?.forEach { props.put(it) }
             json.put("properties", props)
             if (weaponRange != null)
                 json.put("weaponRange", weaponRange)
@@ -978,6 +1146,36 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpWeapon = mWeapon(
+                            name = name,
+                            custom = true)
+
+                        tmpWeapon.damageType = damageType
+                        if (category != null)
+                            tmpWeapon.category = category
+                        if (damageBonus != null)
+                            tmpWeapon.damageBonus = damageBonus
+                        if (damageDice != null)
+                            tmpWeapon.damageDice = damageDice
+                        if (longRange != null)
+                            tmpWeapon.longRange = longRange
+                        if (longThrowRange != null)
+                            tmpWeapon.longThrowRange = longThrowRange
+                        if (normalRange != null)
+                            tmpWeapon.normalRange = normalRange
+                        if (normalThrowRange != null)
+                            tmpWeapon.normalThrowRange = normalThrowRange
+                        if (properties != null)
+                            tmpWeapon.properties = properties
+                        if (weaponRange != null)
+                            tmpWeapon.weaponRange = weaponRange
+                        if (cost != null)
+                            tmpWeapon.cost = cost
+                        if (weight != null)
+                            tmpWeapon.weight = weight
+                        if (visible != null)
+                            tmpWeapon.visible = visible
+                        Scenario.loadedResources.weapons[tmpWeapon.name] = tmpWeapon
                         success = true
                     }
                     is Result.Failure -> {
@@ -1011,6 +1209,8 @@ object Equipment {
 
     /**
      * Deletes a [weapon][mWeapon] from the [scenario]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] from which the [weapon][mWeapon] is deleted
      * @param name Name of the [weapon][mWeapon] to delete
      * @return true if ended with success or false if error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
@@ -1023,6 +1223,7 @@ object Equipment {
                 val (_, _, result) = endpoint.httpDelete().authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        Scenario.loadedResources.weapons.remove(name)
                         success = true
                     }
                     is Result.Failure -> {
@@ -1042,6 +1243,8 @@ object Equipment {
      * Patch a [weapon][mWeapon] in the [scenario]
      *
      * It cannot change the name of the [weapon][mWeapon]
+     *
+     * Updates [loaded resources][Scenario.loadedResources]
      * @param scenario [Scenario][mScenario] in which the [weapon][mWeapon] will be patched
      * @param name Name of the [weapon][mWeapon] to patch
      * @param damageDice Damage dice of the [weapon][mWeapon]
@@ -1095,8 +1298,7 @@ object Equipment {
             if (normalThrowRange != null)
                 json.put("normalThrowRange", normalThrowRange)
             val props = JSONArray()
-            if (properties != null)
-                properties.forEach { props.put(it) }
+            properties?.forEach { props.put(it) }
             json.put("properties", props)
             if (weaponRange != null)
                 json.put("weaponRange", weaponRange)
@@ -1109,6 +1311,36 @@ object Equipment {
                 ).awaitStringResponseResult()
                 when (result) {
                     is Result.Success -> {
+                        val tmpWeapon = mWeapon(
+                            name = name,
+                            custom = true)
+
+                        tmpWeapon.damageType = damageType
+                        if (category != null)
+                            tmpWeapon.category = category
+                        if (damageBonus != null)
+                            tmpWeapon.damageBonus = damageBonus
+                        if (damageDice != null)
+                            tmpWeapon.damageDice = damageDice
+                        if (longRange != null)
+                            tmpWeapon.longRange = longRange
+                        if (longThrowRange != null)
+                            tmpWeapon.longThrowRange = longThrowRange
+                        if (normalRange != null)
+                            tmpWeapon.normalRange = normalRange
+                        if (normalThrowRange != null)
+                            tmpWeapon.normalThrowRange = normalThrowRange
+                        if (properties != null)
+                            tmpWeapon.properties = properties
+                        if (weaponRange != null)
+                            tmpWeapon.weaponRange = weaponRange
+                        if (cost != null)
+                            tmpWeapon.cost = cost
+                        if (weight != null)
+                            tmpWeapon.weight = weight
+                        if (visible != null)
+                            tmpWeapon.visible = visible
+                        Scenario.loadedResources.weapons[tmpWeapon.name] = tmpWeapon
                         success = true
                     }
                     is Result.Failure -> {
@@ -1138,6 +1370,5 @@ object Equipment {
             return false
         }
     }
-
     //endregion
 }

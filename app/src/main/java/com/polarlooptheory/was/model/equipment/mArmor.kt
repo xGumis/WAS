@@ -9,6 +9,7 @@ package com.polarlooptheory.was.model.equipment
  * @property strMinimum Minimum of strength required
  * @property weight Armor's weight
  * @property visible Visibility(is it visible for all players)
+ * @property custom Is it made custom for scenario
  */
 class mArmor (
     var name: String = "",
@@ -17,7 +18,8 @@ class mArmor (
     var stealthDisadvantage: Boolean = false,
     var strMinimum: Int = 0,
     var weight: Int = 0,
-    var visible: Boolean = false
+    var visible: Boolean = false,
+    var custom: Boolean = false
 ){
     /**
      * Armor class's model class

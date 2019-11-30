@@ -16,6 +16,7 @@ package com.polarlooptheory.was.model.equipment
  * @property weaponRange Weapon's reach
  * @property weight Weapon's weight
  * @property visible Visibility(is it visible for all players)
+ * @property custom Is it made custom for scenario
  */
 class mWeapon (
     var name: String = "",
@@ -29,7 +30,8 @@ class mWeapon (
     var normalRange: Int = 0,
     var normalThrowRange: Int = 0,
     var properties: List<String>? = null,
-    var weaponRange: Int = 0,
+    var weaponRange: String? = null,
     var weight: Int = 0,
-    var visible: Boolean = false
+    var visible: Boolean = false,
+    var custom: Boolean = false
     )

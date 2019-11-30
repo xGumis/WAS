@@ -3,7 +3,6 @@ package com.polarlooptheory.was.apiCalls
 import com.github.kittinunf.fuel.core.FuelError
 import com.polarlooptheory.was.Settings
 import kotlinx.coroutines.runBlocking
-import org.json.JSONObject
 
 /**
  * Object for handling requests' errors

@@ -40,13 +40,8 @@ object Login {
                     success = true
                 }
                 is Result.Failure -> {
-                    if (result.error.response.statusCode == 401)
-                        Settings.error_message = "Unauthorized"
-                    else if (result.error.response.statusCode == 400)
-                        Settings.error_message =
+                    Settings.error_message =
                             JSONObject(String(result.error.errorData)).getString("error_description")
-                    else
-                        ApiErrorHandling.handleError(result.error)
                 }
             }
         }
@@ -78,15 +73,8 @@ object Login {
                     success = true
                 }
                 is Result.Failure -> {
-                    if (result.error.response.statusCode == 401)
-                        Settings.error_message = "Unauthorized"
-                    else if (result.error.response.statusCode == 400)
-                        Settings.error_message =
+                    Settings.error_message =
                             JSONObject(String(result.error.errorData)).getString("error_description")
-                    else if (result.error.response.statusCode == 403)
-                        Settings.error_message = "Session expired"
-                    else
-                        ApiErrorHandling.handleError(result.error)
                     logout()
                 }
             }

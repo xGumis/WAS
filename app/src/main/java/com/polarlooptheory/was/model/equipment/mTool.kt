@@ -8,6 +8,7 @@ package com.polarlooptheory.was.model.equipment
  * @property cost Tool's cost
  * @property weight Tool's weight
  * @property visible Visibility(is it visible for all players)
+ * @property custom Is it made custom for scenario
  */
 class mTool (
     var name: String = "",
@@ -15,5 +16,6 @@ class mTool (
     var category: String? = null,
     var cost: String? = null,
     var weight: Int = 0,
-    var visible: Boolean = false
+    var visible: Boolean = false,
+    var custom: Boolean = false
     )
