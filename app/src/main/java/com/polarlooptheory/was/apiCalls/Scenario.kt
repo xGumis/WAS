@@ -19,6 +19,9 @@ import com.polarlooptheory.was.model.types.mDamageType
 import com.polarlooptheory.was.model.types.mMagicSchool
 import com.polarlooptheory.was.model.types.mWeaponProperty
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
@@ -32,7 +35,7 @@ import ua.naiksoftware.stomp.dto.StompHeader
  */
 object Scenario {
     private const val endpoint = Settings.server_address + "api/v1/scenario"
-    private val mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,"wss://10.0.2.2:8080/rpg-server")
+    private val mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,"${Settings.server_address}rpg-server-kotlin")
     private val compositeDisposable = CompositeDisposable()
     var scenariosList: List<mScenario> = listOf()
 
@@ -116,7 +119,6 @@ object Scenario {
             gear.clear()
         }
     }
-    //TODO(Websocket)
     //TODO(FAB do wiadomości)
 
 
@@ -1355,16 +1357,25 @@ object Scenario {
         return success
     }
     //endregion
-
     //region WebSocket
-    /*fun joinWebsocket(scenario: mScenario){
+    /**
+     * Function for joining websocket
+     *
+     * Use while joining to scenario
+     * @param scenario Scenario to join
+     * @param listener Actions' [listener][ISocketListener]
+     */
+    fun joinWebsocket(scenario: mScenario, listener: ISocketListener): Boolean{
+        var success = false
         val lifecycle = mStompClient.lifecycle().subscribe { event ->
             when(event.type){
                 LifecycleEvent.Type.OPENED -> {
                     Log.i("STOMP","Connection opened")
+                    success = true
                 }
                 LifecycleEvent.Type.ERROR -> {
                     Log.i("STOMP","Error ",event.exception)
+                    Settings.error_message = event.exception.message.orEmpty()
                 }
                 LifecycleEvent.Type.CLOSED -> {
                     Log.i("STOMP","Connection closed")
@@ -1372,19 +1383,151 @@ object Scenario {
                 LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT -> {
                     Log.i("STOMP","Failed server heartbeat")
                 }
+                null -> {}
             }
         }
         if(!mStompClient.isConnected)
             mStompClient.connect(listOf(StompHeader("X-Authorization",User.UserToken.access_token)))
-        val scenarioTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}").subscribe({msg -> println(msg.payload) }, {err -> Log.i("ScenarioSTOMP",err.message)})
-        val playerTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}/player/${User.username}").subscribe({msg -> println(msg.payload) }, {err -> Log.i("PlayerSTOMP",err.message)})
+        val playerTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}/player/${User.username}").subscribe({msg -> run{
+            val json = JSONObject(msg.payload)
+            when(json.getString("action")){
+                "message" -> {
+                    GlobalScope.launch { getMessages(scenario) }
+                    val msg_json = json.getJSONObject("body")
+                    val tmpMsg = mMessage(
+                        content = msg_json.getString("content"),
+                        sender = msg_json.getString("sender"),
+                        whisperTarget = msg_json.getString("whisperTarget"),
+                        type = when (msg_json.getString("type")) {
+                            "system" -> mMessage.Type.SYSTEM
+                            "character" -> mMessage.Type.CHARACTER
+                            "whisper" -> mMessage.Type.WHISPER
+                            else -> mMessage.Type.OOC
+                        }
+                    )
+                    listener.OnPrivateMessageRecieved(scenario,tmpMsg)
+                }
+                "reload" -> {
+                    when(json.getString("target")){
+                        "characters" -> {
+                            GlobalScope.launch {
+                                if(async{getCharacters(scenario)}.await())
+                                    listener.OnErrorRecieved(scenario)
+                                else listener.OnReloadCharacters(scenario)
+                            }
+                        }
+                        "gameMaster" -> {
+                            GlobalScope.launch {
+                                if(async{getPlayers(scenario)}.await())
+                                    listener.OnErrorRecieved(scenario)
+                                else listener.OnReloadGM(scenario)
+                            }
+                        }
+                        else -> {
+                            Settings.error_message = "Unexpecter reload target"
+                            listener.OnErrorRecieved(scenario)
+                        }
+                    }
+
+                }
+                "leave" -> {
+                    clearScenarioCache()
+                    listener.OnKick(scenario)
+                }
+                else ->{
+                    Settings.error_message = "Unexpected action"
+                    listener.OnErrorRecieved(scenario)
+                }
+            }
+        }},
+            {err -> Log.i("PlayerSTOMP",err.message)})
+        val scenarioTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}").subscribe({msg -> run{
+            val json = JSONObject(msg.payload)
+            when(json.getString("action")){
+                "message" -> {
+                    GlobalScope.launch { getMessages(scenario) }
+                    val msg_json = json.getJSONObject("body")
+                    val tmpMsg = mMessage(
+                        content = msg_json.getString("content"),
+                        sender = msg_json.getString("sender"),
+                        whisperTarget = msg_json.getString("whisperTarget"),
+                        type = when (msg_json.getString("type")) {
+                            "system" -> mMessage.Type.SYSTEM
+                            "character" -> mMessage.Type.CHARACTER
+                            "whisper" -> mMessage.Type.WHISPER
+                            else -> mMessage.Type.OOC
+                        }
+                    )
+                    listener.OnMessageRecieved(scenario,tmpMsg)
+                }
+                "reload" -> {
+                    if(json.getString("target")=="players"){
+                        GlobalScope.launch {
+                            if(async{getPlayers(scenario)}.await())
+                                listener.OnErrorRecieved(scenario)
+                            else listener.OnReloadPlayers(scenario)
+                        }
+                    }else{
+                        Settings.error_message = "Unexpecter reload target"
+                        listener.OnErrorRecieved(scenario)
+                    }
+                }
+                else ->{
+                    Settings.error_message = "Unexpected action"
+                    listener.OnErrorRecieved(scenario)
+                }
+            }
+        }},
+            {err -> Log.i("ScenarioSTOMP",err.message)})
         compositeDisposable.add(lifecycle)
         compositeDisposable.add(scenarioTopic)
         compositeDisposable.add(playerTopic)
+        return success
     }
+
+    /**
+     * Disconnects from socket
+     *
+     * Use with leaving scenario
+     */
     fun leaveWebsocket(){
         mStompClient.disconnect()
-    }*/
+        compositeDisposable.clear()
+    }
+
+    /**
+     * Interface for handling the websocket actions in UI
+     */
+    interface ISocketListener{
+        /**
+         * Called on need for players' list reload
+         */
+        fun OnReloadPlayers(scenario: mScenario)
+        /**
+         * Called on need for characters' list reload
+         */
+        fun OnReloadCharacters(scenario: mScenario)
+        /**
+         * Called on need for GM reload
+         */
+        fun OnReloadGM(scenario: mScenario)
+        /**
+         * Called when player is kicked from scenario
+         */
+        fun OnKick(scenario: mScenario)
+        /**
+         * Called when player got message on private socket
+         */
+        fun OnPrivateMessageRecieved(scenario: mScenario, message: mMessage)
+        /**
+         * Called when player got message on scenario public socket
+         */
+        fun OnMessageRecieved(scenario: mScenario, message: mMessage)
+        /**
+         * Called when some kind of error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
+         */
+        fun OnErrorRecieved(scenario: mScenario)
+    }
     //endregion
 
     /**
