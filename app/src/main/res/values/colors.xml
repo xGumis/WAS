@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#2d3c5b</color>
+    <color name="colorPrimaryDark">#272e48</color>
+    <color name="colorAccent">#f25230</color>
+    <color name="messagePrivate">#59F</color>
+    <color name="messagePrivateDark">#33F</color>
+    <color name="messagePrivateText">#000</color>
+    <color name="messageGM">#5E9</color>
+    <color name="messageGMDark">#0A3</color>
+    <color name="messageGMText">#000</color>
+    <color name="messageCharacter">#FFF</color>
+    <color name="messageCharacterDark">#777</color>
+    <color name="messageCharacterText">#000</color>
+    <color name="messageOOC">#EE9</color>
+    <color name="messageOOCDark">#AA2</color>
+    <color name="messageOOCText">#000</color>
+    <color name="messageSystem">#BBB</color>
+    <color name="messageSystemDark">#000</color>
+    <color name="messageSystemText">#000</color>
 </resources>

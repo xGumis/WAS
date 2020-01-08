@@ -50,12 +50,14 @@ object Scenario {
         var scenario: mScenario = mScenario()
         var notesList: List<mNote> = listOf()
         var messagesList: List<mMessage> = listOf()
-        var charactersList: List<mCharacter> = listOf()
+        var charactersList: Map<String,mCharacter> = mapOf()
+        var chosenCharacter : mCharacter? = null
         fun clear(){
             scenario = mScenario()
             notesList = listOf()
             messagesList = listOf()
-            charactersList = listOf()
+            charactersList = mapOf()
+            chosenCharacter = null
         }
     }
 
@@ -119,7 +121,6 @@ object Scenario {
             gear.clear()
         }
     }
-    //TODO(FAB do wiadomości)
 
 
     /**
@@ -477,7 +478,8 @@ object Scenario {
         scenario: mScenario,
         character: mCharacter,
         numberOfDices: Int,
-        dicesValue: Int
+        dicesValue: Int,
+        visible: Boolean
     ): Array<Int>? {
         val endpoint = "${Settings.server_address}action/roll/scenario/${scenario.scenarioKey}"
         var rolls: Array<Int>? = null
@@ -486,6 +488,7 @@ object Scenario {
             json.put("characterName", character.name)
             json.put("dices", numberOfDices)
             json.put("value", dicesValue)
+            json.put("visible",visible)
             val (_, _, result) = endpoint.httpPost().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
             ).awaitStringResponseResult()
@@ -496,7 +499,7 @@ object Scenario {
                 }
                 is Result.Failure -> {
                     if (ApiErrorHandling.handleError(result.error))
-                        rollDice(scenario, character, numberOfDices, dicesValue)
+                        rollDice(scenario, character, numberOfDices, dicesValue,visible)
                 }
             }
         }
@@ -584,7 +587,7 @@ object Scenario {
             ).authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
             when (result) {
                 is Result.Success -> {
-                    val tmplist: MutableList<mCharacter> = mutableListOf()
+                    val tmplist: MutableMap<String,mCharacter> = mutableMapOf()
                     val json = JSONArray(result.value)
                     for (i in 0 until json.length()) {
                         val obj = json.getJSONObject(i)
@@ -627,7 +630,6 @@ object Scenario {
                         tmpCharacter.abilities.traits = List(ab.getJSONArray("traits").length()){ab.getJSONArray("traits").getString(it)}
                         tmpCharacter.abilities.languages = List(ab.getJSONArray("languages").length()){ab.getJSONArray("languages").getString(it)}
                         tmpCharacter.abilities.proficiencies = List(ab.getJSONArray("proficiencies").length()){ab.getJSONArray("proficiencies").getString(it)}
-                        tmplist.add(tmpCharacter)
                         val eq = obj.getJSONObject("equipment")
                         tmpCharacter.equipment.armorClass = eq.getInt("armorClass")
                         tmpCharacter.equipment.armors = List(eq.getJSONArray("armors").length()){eq.getJSONArray("armors").getString(it)}
@@ -660,6 +662,7 @@ object Scenario {
                             used = slots.getJSONObject(it).getInt("used")
                         )}
                         tmpCharacter.spells.spells = List(spells.getJSONArray("spells").length()){spells.getJSONArray("spells").getString(it)}
+                        tmplist[tmpCharacter.name] = tmpCharacter
                     }
                     connectedScenario.charactersList = tmplist
                     success = true
@@ -1534,6 +1537,7 @@ object Scenario {
      * Clears cached scenarios
      */
     fun clear() {
+        leaveWebsocket()
         scenariosList = listOf()
         clearScenarioCache()
     }

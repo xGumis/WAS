@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+
+        <EditText
+            android:id="@+id/customName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Armor Class" />
+
+        <EditText
+            android:id="@+id/customAC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Armor Class"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <Switch
+            android:id="@+id/customDexBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Armor Class Dex Bonus: " />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView35"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Max Dex Bonus" />
+
+        <EditText
+            android:id="@+id/customMaxDexBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Max Dex Bonus"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView36"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Cost" />
+
+        <EditText
+            android:id="@+id/customCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Cost"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView37"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Min Strength" />
+
+        <EditText
+            android:id="@+id/customMinStr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Min Strength"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView38"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Weight" />
+
+        <EditText
+            android:id="@+id/customWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Weight"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <Switch
+            android:id="@+id/customStealthDisadvantage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stealth Disadvantage " />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <Switch
+            android:id="@+id/customVisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Visible " />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView56"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView57"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Category" />
+
+        <EditText
+            android:id="@+id/customCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Category"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView62"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Damage Type" />
+
+        <EditText
+            android:id="@+id/customDmgType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Damage Type"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView63"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Damage Dice" />
+
+        <EditText
+            android:id="@+id/customDmgDice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Damage Dice"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView64"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Damage Bonus" />
+
+        <EditText
+            android:id="@+id/customDmgBonus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Damage Bonus"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView58"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Cost" />
+
+        <EditText
+            android:id="@+id/customCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Cost"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView65"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Weapon Type" />
+
+        <EditText
+            android:id="@+id/customWeaponReach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Weapon Type"
+            android:inputType="textPersonName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView66"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Normal Range" />
+
+        <EditText
+            android:id="@+id/customNormalRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Normal Range"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView67"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Long Range" />
+
+        <EditText
+            android:id="@+id/customLongRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Long Range"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView68"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Normal Throw Range" />
+
+        <EditText
+            android:id="@+id/customNormalThrowingRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Normal Throw Range"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView69"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Long Throwing Range" />
+
+        <EditText
+            android:id="@+id/customLongThrowingRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Long Throwing Range"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/textView60"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:text="Weight" />
+
+        <EditText
+            android:id="@+id/customWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Weight"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <Switch
+            android:id="@+id/customVisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Visible " />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
