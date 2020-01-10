@@ -41,13 +41,17 @@ class ScenarioListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
+        GlobalScope.launch(Dispatchers.Main) {
+            val req = async{Scenario.getScenarios()}.await()
+            if(req) adapter.notifyDataSetChanged()
+        }
         makeDrawer(activity as Activity)
-        scenariosList = listOf(
+        /*scenariosList = listOf(
             mScenario("das","Test1"),
             mScenario("das","Test scenario"),
             mScenario("das","Scenario1"),
             mScenario("das","Scenariusz dla moich sąsiadów")
-        )
+        )*/
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter = ScenarioListAdapter()
@@ -105,5 +109,4 @@ class ScenarioListFragment : Fragment() {
             })
             .buildForFragment()
     }
-
 }

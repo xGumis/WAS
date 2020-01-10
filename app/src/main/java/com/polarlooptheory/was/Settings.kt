@@ -7,7 +7,7 @@ package com.polarlooptheory.was
  * @property error_message Error description obtained from server(clear after use)
  */
 object Settings {
-    const val server_address = "http://192.168.1.14:8080/"
+    const val server_address = "http://192.168.1.16:8080/"
     var error_message = ""
     const val app_username = "web"
     const val app_password = "password"
