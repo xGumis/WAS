@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.character
+package com.polarlooptheory.was.views.character.statistics
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.views.start.RegisterFragment
+import com.polarlooptheory.was.views.character.statistics.CharacterHealthFragment
+import com.polarlooptheory.was.views.character.statistics.CharacterMagicFragment
 import kotlinx.android.synthetic.main.char_proficiencies.view.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class CharacterProficiencyFragment : Fragment() {

@@ -2,31 +2,50 @@ package com.polarlooptheory.was.views
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.ChatAdapter
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
-import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Login
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.model.mMessage
+import com.polarlooptheory.was.views.character.abilities.CharacterFeaturesFragment
+import com.polarlooptheory.was.views.character.abilities.CharacterLanguagesFragment
+import com.polarlooptheory.was.views.character.abilities.CharacterProficienciesFragment
+import com.polarlooptheory.was.views.character.abilities.CharacterTraitsFragment
+import com.polarlooptheory.was.views.character.statistics.*
 import com.polarlooptheory.was.views.lists.*
+import com.polarlooptheory.was.views.lists.custom.abilities.CustomFeatureListFragment
+import com.polarlooptheory.was.views.lists.custom.abilities.CustomLanguagesListFragment
+import com.polarlooptheory.was.views.lists.custom.abilities.CustomProficienciesListFragment
+import com.polarlooptheory.was.views.lists.custom.abilities.CustomTraitsListFragment
+import com.polarlooptheory.was.views.lists.custom.equipment.*
+import com.polarlooptheory.was.views.lists.custom.magic.CustomMagicSchoolsListFragment
+import com.polarlooptheory.was.views.lists.custom.magic.CustomSpellsListFragment
 import com.polarlooptheory.was.views.start.StartScreenFragment
+import kotlinx.android.synthetic.main.password_change.*
 import kotlinx.android.synthetic.main.scenario.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class ScenarioFragment : Fragment(),NavigationHost {
     private lateinit var chatRecyclerView: RecyclerView
@@ -82,17 +101,62 @@ class ScenarioFragment : Fragment(),NavigationHost {
             }
         })
         val statistics = ExpandableDrawerItem().withName("Statistics").withSubItems(
-            SecondaryDrawerItem().withIdentifier(5).withName("Base Info"),
-            SecondaryDrawerItem().withIdentifier(6).withName("Background"),
-            SecondaryDrawerItem().withIdentifier(7).withName("Stats"),
-            SecondaryDrawerItem().withIdentifier(8).withName("Health"),
-            SecondaryDrawerItem().withIdentifier(9).withName("Proficiencies")
+            SecondaryDrawerItem().withIdentifier(5).withName("Base Info").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterBaseInfoFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(6).withName("Background").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterBackgroundFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(7).withName("Stats").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterStatsFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(8).withName("Health").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterHealthFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(9).withName("Proficiencies").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterProficiencyFragment(),false)
+                    return false
+                }
+            })
         )
         val abilities = ExpandableDrawerItem().withName("Abilities").withSubItems(
-            SecondaryDrawerItem().withIdentifier(10).withName("Features"),
-            SecondaryDrawerItem().withIdentifier(11).withName("Languages"),
-            SecondaryDrawerItem().withIdentifier(12).withName("Traits"),
-            SecondaryDrawerItem().withIdentifier(13).withName("Proficiencies")
+            SecondaryDrawerItem().withIdentifier(10).withName("Features").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterFeaturesFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(11).withName("Languages").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterLanguagesFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(12).withName("Traits").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterTraitsFragment(),false)
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(13).withName("Proficiencies").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    navigateTo(CharacterProficienciesFragment(),false)
+                    return false
+                }
+            })
         )
         val equipment = ExpandableDrawerItem().withName("Equipment").withSubItems(
             SecondaryDrawerItem().withIdentifier(14).withName("Weapons").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
@@ -136,16 +200,56 @@ class ScenarioFragment : Fragment(),NavigationHost {
         val magic = PrimaryDrawerItem().withIdentifier(20).withName("Magic")
         val management = ExpandableDrawerItem().withName("Game Management").withSubItems(
             ExpandableDrawerItem().withName("Custom Abilities").withSubItems(
-                SecondaryDrawerItem().withIdentifier(21).withName("Features"),
-                SecondaryDrawerItem().withIdentifier(22).withName("Languages"),
-                SecondaryDrawerItem().withIdentifier(23).withName("Traits"),
-                SecondaryDrawerItem().withIdentifier(24).withName("Proficiencies")
+                SecondaryDrawerItem().withIdentifier(21).withName("Features").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomFeatureListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(22).withName("Languages").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomLanguagesListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(23).withName("Traits").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomTraitsListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(24).withName("Proficiencies").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomProficienciesListFragment(),false)
+                        return false
+                    }
+                })
             ),
             ExpandableDrawerItem().withName("Custom Equipment").withSubItems(
-                SecondaryDrawerItem().withIdentifier(25).withName("Weapons"),
-                SecondaryDrawerItem().withIdentifier(26).withName("Armors"),
-                SecondaryDrawerItem().withIdentifier(27).withName("Gear"),
-                SecondaryDrawerItem().withIdentifier(28).withName("Tools"),
+                SecondaryDrawerItem().withIdentifier(25).withName("Weapons").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomWeaponsListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(26).withName("Armors").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomArmorsListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(27).withName("Gear").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomGearListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(28).withName("Tools").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomToolsListFragment(),false)
+                        return false
+                    }
+                }),
                 SecondaryDrawerItem().withIdentifier(29).withName("Vehicles").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                     override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
                         navigateTo(CustomVehicleListFragment(),false)
@@ -154,8 +258,18 @@ class ScenarioFragment : Fragment(),NavigationHost {
                 })
             ),
             ExpandableDrawerItem().withName("Custom Magic").withSubItems(
-                SecondaryDrawerItem().withIdentifier(30).withName("Spells"),
-                SecondaryDrawerItem().withIdentifier(31).withName("Magic Schools")
+                SecondaryDrawerItem().withIdentifier(30).withName("Spells").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomSpellsListFragment(),false)
+                        return false
+                    }
+                }),
+                SecondaryDrawerItem().withIdentifier(31).withName("Magic Schools").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                        navigateTo(CustomMagicSchoolsListFragment(),false)
+                        return false
+                    }
+                })
             ),
             SecondaryDrawerItem().withIdentifier(32).withName("Players").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
@@ -163,9 +277,63 @@ class ScenarioFragment : Fragment(),NavigationHost {
                     return false
                 }
             }),
-            SecondaryDrawerItem().withIdentifier(34).withName("Show Key"),
-            SecondaryDrawerItem().withIdentifier(35).withName("Change Password"),
-            SecondaryDrawerItem().withIdentifier(36).withName("Delete scenario")
+            SecondaryDrawerItem().withIdentifier(34).withName("Show Key").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    val alert = AlertDialog.Builder(activity)
+                    alert.setTitle("Scenario code")
+                    alert.setMessage(Scenario.connectedScenario.scenario.scenarioKey)
+                    alert.setNeutralButton("OK", null)
+                    val dialog: AlertDialog = alert.create()
+                    dialog.show()
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(35).withName("Change Password").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    val alert = AlertDialog.Builder(activity)
+                    alert.setTitle("Scenario code")
+                    alert.setView(View(activity).findViewById<LinearLayout>(R.id.passwordChange))
+                    alert.setPositiveButton("OK") { _, _ ->
+                        if (editPassword1.text.toString() == editPassword2.text.toString()) {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                val req = async {
+                                    Scenario.GM.changeScenarioPassword(
+                                        Scenario.connectedScenario.scenario,
+                                        editPassword1.text.toString()
+                                    )
+                                }.await()
+                                if (!req) {
+                                    (activity as MainActivity).makeToast(Settings.error_message)
+                                    Settings.error_message = ""
+                                }
+                            }
+                        }
+                    }
+                    val dialog: AlertDialog = alert.create()
+                    dialog.show()
+                    return false
+                }
+            }),
+            SecondaryDrawerItem().withIdentifier(36).withName("Delete Scenario").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    val alert = AlertDialog.Builder(activity)
+                    alert.setTitle("Delete scenario?")
+                    alert.setMessage("Are you sure you want to delete this scenario?")
+                    alert.setPositiveButton("Yes") {_, _ ->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val req = async { Scenario.GM.deleteScenario(Scenario.connectedScenario.scenario) }.await()
+                            if(req) {
+                                Scenario.clear()
+                                (activity as NavigationHost).navigateTo(ScenarioListFragment(), false)
+                            }
+                        }
+                    }
+                    alert.setNegativeButton("No", DialogInterface.OnClickListener{ dialogInterface: DialogInterface, i: Int -> dialogInterface.cancel()})
+                    val dialog: AlertDialog = alert.create()
+                    dialog.show()
+                    return false
+                }
+            })
         )
 
 

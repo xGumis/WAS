@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.character
+package com.polarlooptheory.was.views.character.statistics
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,26 +7,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
-import kotlinx.android.synthetic.main.char_magic.view.*
+import com.polarlooptheory.was.views.character.statistics.CharacterBackgroundFragment
+import kotlinx.android.synthetic.main.char_base_info.view.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterMagicFragment : Fragment() {
+class CharacterBaseInfoFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.char_magic, container, false)
-        view.buttonSave2.setOnClickListener {
+        val view = inflater.inflate(R.layout.char_base_info, container, false)
+        view.buttonSave4.setOnClickListener {
             GlobalScope.launch {
                 //TODO update postaci
             }
         }
-        view.buttonBack.setOnClickListener {
+        view.buttonNext.setOnClickListener {
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterProficiencyFragment(), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterBackgroundFragment(), false)
             }
         }
         return view
