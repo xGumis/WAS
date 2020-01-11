@@ -36,7 +36,7 @@ object Register {
      */
     suspend fun register(username: String, email: String, password: String): Boolean {
         val json = JSONObject()
-        json.put("username", username)
+        json.put("username", username.toLowerCase())
         json.put("email", email)
         json.put("password", password)
         var success = false

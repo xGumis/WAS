@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.ChatAdapter
@@ -32,7 +33,6 @@ class ScenarioFragment : Fragment(),NavigationHost {
     private var isUp = false
     private lateinit var chat : LinearLayout
     private lateinit var  mainView : View
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,9 +44,12 @@ class ScenarioFragment : Fragment(),NavigationHost {
         return view
     }
     private fun makeDrawer(activity: Activity){
-
+        val drawer = (activity as NavigationHost).getDrawer()
         val logout = PrimaryDrawerItem().withIdentifier(1).withName("Logout").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
             override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                drawer.resetDrawerContent()
+                drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = false
+                drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 Login.logout()
                 (activity as NavigationHost).navigateTo(StartScreenFragment(),false)
                 return false
@@ -172,35 +175,34 @@ class ScenarioFragment : Fragment(),NavigationHost {
                 ProfileDrawerItem().withName(User.username)
             )
             .build()
+        drawer.resetDrawerContent()
+        drawer.setHeader(headerResult.view,true)
+        drawer.setToolbar(activity,(activity as MainActivity).toolbar)
+        drawer.addItems(
+            logout,
+            leave,
+            characters,
+            DividerDrawerItem(),
+            statistics,
+            abilities,
+            equipment,
+            magic,
+            DividerDrawerItem(),
+            roll,
+            notes
 
-        val drawer = DrawerBuilder()
-            .withAccountHeader(headerResult)
-            .withHeaderDivider(true)
-            .withActivity(activity)
-            .withToolbar((activity as MainActivity).toolbar)
-            .addDrawerItems(
-                logout,
-                leave,
-                characters,
-                DividerDrawerItem(),
-                statistics,
-                abilities,
-                equipment,
-                magic,
-                DividerDrawerItem(),
-                roll,
-                notes
-            )
-            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener{
-                override fun onItemClick(
-                    view: View?,
-                    position: Int,
-                    drawerItem: IDrawerItem<*>
-                ): Boolean {
-                    return false
-                }
-            })
-            .buildForFragment()
+        )
+        drawer.onDrawerItemClickListener = object : Drawer.OnDrawerItemClickListener{
+            override fun onItemClick(
+                view: View?,
+                position: Int,
+                drawerItem: IDrawerItem<*>
+            ): Boolean {
+                return false
+            }
+        }
+        drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = true
+        drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         if(User.username == Scenario.connectedScenario.scenario.gameMaster)
             drawer.addItemAtPosition(management,9)
     }
@@ -218,9 +220,6 @@ class ScenarioFragment : Fragment(),NavigationHost {
             mMessage(content = "wiadomość postaci",sender = "Postać",type = mMessage.Type.CHARACTER),
             mMessage(content = "wiadomość prywatna",sender = "Postać",type = mMessage.Type.WHISPER)
         )
-        /*mainView.swiperefresh.setOnRefreshListener {
-            mainView.swiperefresh.isRefreshing = false
-        }*/
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = ChatAdapter(dataset)
         chatRecyclerView = mainView.messageList.apply {
@@ -248,4 +247,9 @@ class ScenarioFragment : Fragment(),NavigationHost {
         if (addToBackStack) transaction.addToBackStack(null)
         transaction.commit()
     }
+
+    override fun getDrawer(): Drawer {
+        return (activity as NavigationHost).getDrawer()
+    }
+
 }

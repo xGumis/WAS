@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Register
 import com.polarlooptheory.was.views.lists.ScenarioListFragment
+import kotlinx.android.synthetic.main.register_screen.*
 import kotlinx.android.synthetic.main.register_screen.view.*
 import kotlinx.android.synthetic.main.start_screen.view.loginButton
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -22,13 +25,34 @@ class RegisterFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.register_screen, container, false)
         view.loginButton.setOnClickListener{
-            GlobalScope.launch {
-                (activity as NavigationHost).navigateTo(ScenarioListFragment(),false)
+            var correct = true
+            val username = loginUsername.text.trim().toString()
+            val email = editText.text.trim().toString()
+            val password = loginPassword.text.toString()
+            val confirm = loginPasswordConfirm.text.toString()
+            val err = Register.checkFields(username,email,password)
+            if(err.contains(Register.Field.USERNAME)){
+                correct = false
+                loginUsername.error = "Username must be at least 4 characters long"
             }
-        }
-        view.textSignUp.setOnClickListener {
-            GlobalScope.launch {
-                (activity as NavigationHost).navigateTo(LoginFragment(),false)
+            if(err.contains(Register.Field.EMAIL)){
+                correct = false
+                editText.error = "Email is not valid"
+            }
+            if(err.contains(Register.Field.PASSWORD)){
+                correct = false
+                loginPassword.error = "Password must be at least 6 characters long"
+            }
+            if(password!=confirm){
+                correct = false
+                loginPasswordConfirm.error = "Passwords don't match"
+            }
+            if(correct){
+                GlobalScope.launch {
+                    val req = async{Register.register(username,email, password)}.await()
+                    if(req)
+                        (activity as NavigationHost).navigateTo(LoginFragment(),false)
+                }
             }
         }
         return view

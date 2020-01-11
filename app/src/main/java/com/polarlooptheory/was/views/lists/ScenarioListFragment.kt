@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
@@ -46,12 +47,6 @@ class ScenarioListFragment : Fragment() {
             if(req) adapter.notifyDataSetChanged()
         }
         makeDrawer(activity as Activity)
-        /*scenariosList = listOf(
-            mScenario("das","Test1"),
-            mScenario("das","Test scenario"),
-            mScenario("das","Scenario1"),
-            mScenario("das","Scenariusz dla moich sąsiadów")
-        )*/
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter = ScenarioListAdapter()
@@ -59,8 +54,12 @@ class ScenarioListFragment : Fragment() {
         return view
         }
     private fun makeDrawer(activity: Activity){
+        val drawer = (activity as NavigationHost).getDrawer()
         val logout = PrimaryDrawerItem().withIdentifier(1).withName("Logout").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
             override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                drawer.resetDrawerContent()
+                drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = false
+                drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 Login.logout()
                 (activity as NavigationHost).navigateTo(StartScreenFragment(),false)
                 return false
@@ -87,26 +86,25 @@ class ScenarioListFragment : Fragment() {
             )
             .build()
 
-        val drawer = DrawerBuilder()
-            .withAccountHeader(headerResult)
-            .withHeaderDivider(true)
-            .withActivity(activity)
-            .withToolbar((activity as MainActivity).toolbar)
-            .addDrawerItems(
-                logout,
-                DividerDrawerItem(),
-                join,
-                create
-            )
-            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener{
-                override fun onItemClick(
-                    view: View?,
-                    position: Int,
-                    drawerItem: IDrawerItem<*>
-                ): Boolean {
-                    return false
-                }
-            })
-            .buildForFragment()
+        drawer.resetDrawerContent()
+        drawer.setHeader(headerResult.view,true)
+        drawer.setToolbar(activity,(activity as MainActivity).toolbar)
+        drawer.addItems(
+            logout,
+            DividerDrawerItem(),
+            join,
+            create
+        )
+        drawer.onDrawerItemClickListener = object : Drawer.OnDrawerItemClickListener{
+            override fun onItemClick(
+                view: View?,
+                position: Int,
+                drawerItem: IDrawerItem<*>
+            ): Boolean {
+                return false
+            }
+        }
+        drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = true
+        drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 }

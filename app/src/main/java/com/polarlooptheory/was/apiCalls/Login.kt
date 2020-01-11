@@ -25,7 +25,7 @@ object Login {
         var success = false
         runBlocking {
             val (_, _, result) = endpoint.httpPost(
-                listOf("grant_type" to "password", "username" to username, "password" to password)
+                listOf("grant_type" to "password", "username" to username.toLowerCase(), "password" to password)
             ).authentication().basic(
                 Settings.app_username,
                 Settings.app_password
