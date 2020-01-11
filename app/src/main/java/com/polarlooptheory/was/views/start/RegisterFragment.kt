@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Register
 import com.polarlooptheory.was.views.lists.ScenarioListFragment
 import kotlinx.android.synthetic.main.register_screen.*
@@ -52,8 +54,15 @@ class RegisterFragment : Fragment() {
                     val req = async{Register.register(username,email, password)}.await()
                     if(req)
                         (activity as NavigationHost).navigateTo(LoginFragment(),false)
+                    else {
+                        (activity as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
                 }
             }
+        }
+        view.textSignUp.setOnClickListener {
+            (activity as NavigationHost).navigateTo(LoginFragment(), false)
         }
         return view
     }

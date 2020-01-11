@@ -2,6 +2,7 @@ package com.polarlooptheory.was
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,6 +35,12 @@ class MainActivity : AppCompatActivity(), NavigationHost, CoroutineScope by Main
         supportFragmentManager.beginTransaction().add(R.id.main,
             StartScreenFragment()
         ).commit()
+    }
+
+    fun makeToast(msg: String){
+        runOnUiThread {
+            Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onBackPressed() {

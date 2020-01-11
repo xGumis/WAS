@@ -1,12 +1,15 @@
 package com.polarlooptheory.was.views.start
 
 import android.os.Bundle
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Login
 import com.polarlooptheory.was.views.lists.ScenarioListFragment
 import kotlinx.android.synthetic.main.login_screen.view.*
@@ -27,13 +30,15 @@ class LoginFragment : Fragment() {
                 val login = async{Login.getToken(view.loginUsername.text.toString(), view.loginPassword.text.toString())}
                 if(login.await()){
                     (activity as NavigationHost).navigateTo(ScenarioListFragment(),false)
-            }
+                }
+                else {
+                        (activity as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                }
         }
         }
         view.textSignUp.setOnClickListener {
-            GlobalScope.launch {
                 (activity as NavigationHost).navigateTo(RegisterFragment(), false)
-            }
         }
         return view
     }

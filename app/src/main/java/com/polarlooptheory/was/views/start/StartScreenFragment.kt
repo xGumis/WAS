@@ -28,14 +28,10 @@ class StartScreenFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.start_screen, container, false)
         view.loginButton.setOnClickListener{
-            GlobalScope.launch {
                 (activity as NavigationHost).navigateTo(LoginFragment(),false)
-            }
         }
         view.registerMain.setOnClickListener {
-            GlobalScope.launch {
                 (activity as NavigationHost).navigateTo(RegisterFragment(),false)
-            }
         }
         view.button.setOnClickListener {
             GlobalScope.launch {
