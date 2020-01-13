@@ -1,17 +1,9 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.app
 
-import android.content.Context.LAYOUT_INFLATER_SERVICE
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.equipment.mVehicle
-import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.android.synthetic.main.player_list_row.view.*
 
 class PlayerListAdapter(private var playerList: List<String>) : RecyclerView.Adapter<PlayerListAdapter.Holder>() {

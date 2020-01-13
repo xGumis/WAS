@@ -1,34 +1,34 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.app
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.mNote
-import kotlinx.android.synthetic.main.char_list_row.view.*
+import com.polarlooptheory.was.apiCalls.Scenario.scenariosList
+import com.polarlooptheory.was.model.mScenario
+import kotlinx.android.synthetic.main.scenario_list_row.view.*
 
-class NoteListAdapter(private var noteList: List<mNote>) : RecyclerView.Adapter<NoteListAdapter.Holder>() {
+class ScenarioListAdapter : RecyclerView.Adapter<ScenarioListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val inflatedView = parent.inflate(R.layout.char_list_row, false)
+        val inflatedView = parent.inflate(R.layout.scenario_list_row, false)
         return Holder(
             inflatedView
         )
     }
 
     override fun getItemCount(): Int {
-        return noteList.size
+        return scenariosList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = noteList[position]
+        val item = scenariosList[position]
         holder.bind(item)
     }
 
-
     class Holder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
         private var view: View = v
-        private var note : mNote? = null
+        private var scenario : mScenario? = null
 
         init {
             v.setOnClickListener(this)
@@ -38,9 +38,9 @@ class NoteListAdapter(private var noteList: List<mNote>) : RecyclerView.Adapter<
             println("ass")
         }
 
-        fun bind(note: mNote){
-            this.note = note
-            view.charName.text = note.name
+        fun bind(scenario: mScenario){
+            this.scenario = scenario
+            view.textScenarioName.text = scenario.name
         }
 
     }

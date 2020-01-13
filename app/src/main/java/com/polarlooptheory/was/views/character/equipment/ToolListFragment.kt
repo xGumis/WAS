@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.lists
+package com.polarlooptheory.was.views.character.equipment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Equipment
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mTool
-import com.polarlooptheory.was.model.equipment.mVehicle
-import com.polarlooptheory.was.views.adapters.ToolListAdapter
-import com.polarlooptheory.was.views.adapters.VehicleListAdapter
+import com.polarlooptheory.was.views.adapters.eq.character.ToolListAdapter
 import kotlinx.android.synthetic.main.scenario_list.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class ToolListFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -23,14 +25,21 @@ class ToolListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val toolList = listOf(
-            mTool("asd","dsa","asdsad"),
-            mTool("asd","dsa","asdsad"),
-            mTool("asd","dsa","asdsad")
-        )
+        val list: MutableList<mTool> = mutableListOf()
+        Scenario.connectedScenario.chosenCharacter?.equipment?.tools?.forEach {
+            GlobalScope.launch(Dispatchers.Main) {
+                val req =
+                    async { Equipment.getTools(Scenario.connectedScenario.scenario, it) }.await()
+                if(!req.isNullOrEmpty()) list.addAll(req)
+            }
+        }
+
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
-        adapter = ToolListAdapter(toolList)
+        adapter =
+            ToolListAdapter(
+                list
+            )
         view.scenarioListRec.adapter = adapter
         return view
     }

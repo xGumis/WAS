@@ -6,12 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.equipment.mVehicle
-import com.polarlooptheory.was.views.adapters.PlayerListAdapter
-import com.polarlooptheory.was.views.adapters.VehicleListAdapter
+import com.polarlooptheory.was.views.adapters.app.PlayerListAdapter
 import kotlinx.android.synthetic.main.scenario_list.view.*
 
 class PlayerListFragment : Fragment() {
@@ -29,7 +25,9 @@ class PlayerListFragment : Fragment() {
         )
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
-        adapter = PlayerListAdapter(playerList)
+        adapter = PlayerListAdapter(
+            playerList
+        )
         view.scenarioListRec.adapter = adapter
         return view
     }

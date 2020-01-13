@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.abilities.character
 
 import android.content.Context
 import android.view.Gravity
@@ -9,13 +9,12 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.equipment.mTool
-import kotlinx.android.synthetic.main.description_tool.view.*
-import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
+import com.polarlooptheory.was.model.abilities.mSpell
+import com.polarlooptheory.was.views.adapters.app.inflate
+import kotlinx.android.synthetic.main.description_spell.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
 
-class ToolListAdapter(private var toolList: List<mTool>) : RecyclerView.Adapter<ToolListAdapter.Holder>() {
-
+class SpellListAdapter(private var spellList: List<mSpell>) : RecyclerView.Adapter<SpellListAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.list_row, false)
         return Holder(
@@ -24,18 +23,18 @@ class ToolListAdapter(private var toolList: List<mTool>) : RecyclerView.Adapter<
     }
 
     override fun getItemCount(): Int {
-        return toolList.size
+        return spellList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = toolList[position]
+        val item = spellList[position]
         holder.bind(item)
     }
 
 
     class Holder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
         private var view: View = v
-        private var tool : mTool? = null
+        private var spell : mSpell? = null
 
         init {
             v.setOnClickListener(this)
@@ -45,11 +44,19 @@ class ToolListAdapter(private var toolList: List<mTool>) : RecyclerView.Adapter<
             if(v!=null){
                 val context = v.context
                 val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view = inflater.inflate(R.layout.description_tool,null)
-                view.toolName.text = tool?.name
-                view.toolCost.text = tool?.cost
-                view.toolDescription.text = tool?.description
-                view.toolCategory.text = tool?.category
+                val view = inflater.inflate(R.layout.description_spell,null)
+                view.spellName.text = spell?.name
+                view.spellLevel.text = spell?.level.toString()
+                view.spellSchool.text = spell?.magicSchool
+                view.spellRange.text = spell?.range
+                view.spellCastTime.text = spell?.castingTime
+                view.spellComponents.text = spell?.components
+                view.spellDuration.text = spell?.duration
+                view.spellMaterial.text = spell?.material
+                view.spellConcetration.text = spell?.concentration.toString()
+                view.spellRitual.text = spell?.ritual.toString()
+                view.spellDescription.text = spell?.description
+                view.spellHigherLvL.text = spell?.higherLevels
                 val popupWindow = PopupWindow(view,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,true)
@@ -58,9 +65,9 @@ class ToolListAdapter(private var toolList: List<mTool>) : RecyclerView.Adapter<
             }
         }
 
-        fun bind(tool: mTool){
-            this.tool = tool
-            view.listItemName.text = tool.name
+        fun bind(spell: mSpell){
+            this.spell = spell
+            view.listItemName.text = spell.name
         }
 
     }

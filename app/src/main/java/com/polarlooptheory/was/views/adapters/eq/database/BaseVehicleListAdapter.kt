@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.eq.database
 
 import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.view.Gravity
@@ -10,14 +10,14 @@ import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.model.equipment.mVehicle
-import kotlinx.android.synthetic.main.char_list_row.view.*
+import com.polarlooptheory.was.views.adapters.app.inflate
 import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
 
-class CustomVehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView.Adapter<CustomVehicleListAdapter.Holder>() {
+class BaseVehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView.Adapter<BaseVehicleListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val inflatedView = parent.inflate(R.layout.char_list_row, false)
+        val inflatedView = parent.inflate(R.layout.base_list_row, false)
         return Holder(
             inflatedView
         )
@@ -59,7 +59,7 @@ class CustomVehicleListAdapter(private var vehicleList: List<mVehicle>) : Recycl
 
         fun bind(vehicle: mVehicle){
             this.vehicle = vehicle
-            view.charName.text = vehicle.name
+            view.listItemName.text = vehicle.name
         }
 
     }

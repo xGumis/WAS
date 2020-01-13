@@ -1,13 +1,11 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.app
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.model.mCharacter
 import kotlinx.android.synthetic.main.char_list_row.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 
 class CharacterListAdapter(private var charList: List<mCharacter>) : RecyclerView.Adapter<CharacterListAdapter.Holder>() {
 

@@ -30,6 +30,7 @@ import com.polarlooptheory.was.views.character.abilities.CharacterFeaturesFragme
 import com.polarlooptheory.was.views.character.abilities.CharacterLanguagesFragment
 import com.polarlooptheory.was.views.character.abilities.CharacterProficienciesFragment
 import com.polarlooptheory.was.views.character.abilities.CharacterTraitsFragment
+import com.polarlooptheory.was.views.character.equipment.*
 import com.polarlooptheory.was.views.character.statistics.*
 import com.polarlooptheory.was.views.lists.*
 import com.polarlooptheory.was.views.lists.custom.abilities.CustomFeatureListFragment
@@ -135,25 +136,25 @@ class ScenarioFragment : Fragment(),NavigationHost {
         val abilities = ExpandableDrawerItem().withName("Abilities").withSubItems(
             SecondaryDrawerItem().withIdentifier(10).withName("Features").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(CharacterFeaturesFragment(),false)
+                    navigateTo(TabListFragment(10),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(11).withName("Languages").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(CharacterLanguagesFragment(),false)
+                    navigateTo(TabListFragment(11),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(12).withName("Traits").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(CharacterTraitsFragment(),false)
+                    navigateTo(TabListFragment(12),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(13).withName("Proficiencies").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(CharacterProficienciesFragment(),false)
+                    navigateTo(TabListFragment(13),false)
                     return false
                 }
             })
@@ -161,31 +162,31 @@ class ScenarioFragment : Fragment(),NavigationHost {
         val equipment = ExpandableDrawerItem().withName("Equipment").withSubItems(
             SecondaryDrawerItem().withIdentifier(14).withName("Weapons").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(WeaponListFragment(),false)
+                    navigateTo(TabListFragment(14),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(15).withName("Armors").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(ArmorListFragment(),false)
+                    navigateTo(TabListFragment(15),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(16).withName("Gear").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(GearListFragment(),false)
+                    navigateTo(TabListFragment(16),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(17).withName("Tools").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(ToolListFragment(),false)
+                    navigateTo(TabListFragment(17),false)
                     return false
                 }
             }),
             SecondaryDrawerItem().withIdentifier(18).withName("Vehicles").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                    navigateTo(TabListFragment(),false)
+                    navigateTo(TabListFragment(18),false)
                     return false
                 }
             }),
@@ -197,7 +198,13 @@ class ScenarioFragment : Fragment(),NavigationHost {
             })
 
         )
-        val magic = PrimaryDrawerItem().withIdentifier(20).withName("Magic")
+        val magic = PrimaryDrawerItem().withIdentifier(20).withName("Magic").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+            override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                navigateTo(TabListFragment(20),false)
+                return false
+            }
+        })
+
         val management = ExpandableDrawerItem().withName("Game Management").withSubItems(
             ExpandableDrawerItem().withName("Custom Abilities").withSubItems(
                 SecondaryDrawerItem().withIdentifier(21).withName("Features").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {

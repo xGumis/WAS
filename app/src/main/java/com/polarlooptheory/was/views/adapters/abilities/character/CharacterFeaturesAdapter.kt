@@ -1,6 +1,6 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.abilities.character
 
-import android.content.Context.LAYOUT_INFLATER_SERVICE
+import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +9,12 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.equipment.mVehicle
-import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
+import com.polarlooptheory.was.model.abilities.mFeature
+import com.polarlooptheory.was.views.adapters.app.inflate
+import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
 
-class VehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView.Adapter<VehicleListAdapter.Holder>() {
-
+class CharacterFeaturesAdapter (private var featureList: List<mFeature>) : RecyclerView.Adapter<CharacterFeaturesAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.list_row, false)
         return Holder(
@@ -23,18 +23,18 @@ class VehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView
     }
 
     override fun getItemCount(): Int {
-        return vehicleList.size
+        return featureList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = vehicleList[position]
+        val item = featureList[position]
         holder.bind(item)
     }
 
 
     class Holder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
         private var view: View = v
-        private var vehicle : mVehicle? = null
+        private var feature : mFeature? = null
 
         init {
             v.setOnClickListener(this)
@@ -43,11 +43,10 @@ class VehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView
         override fun onClick(v: View?) {
             if(v!=null){
                 val context = v.context
-                val inflater = context.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view = inflater.inflate(R.layout.description_vehicle_gear,null)
-                view.vehicleName.text = vehicle?.name
-                view.vehicleCost.text = vehicle?.cost
-                view.vehicleDescription.text = vehicle?.description
+                val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val view = inflater.inflate(R.layout.description_abilities,null)
+                view.detailsName.text = feature?.name
+                view.detailsDescription.text = feature?.description
                 val popupWindow = PopupWindow(view,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,true)
@@ -56,9 +55,9 @@ class VehicleListAdapter(private var vehicleList: List<mVehicle>) : RecyclerView
             }
         }
 
-        fun bind(vehicle: mVehicle){
-            this.vehicle = vehicle
-            view.listItemName.text = vehicle.name
+        fun bind(feature: mFeature){
+            this.feature = feature
+            view.listItemName.text = feature.name
         }
 
     }

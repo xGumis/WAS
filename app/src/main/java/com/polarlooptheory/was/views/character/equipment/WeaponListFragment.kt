@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.lists
+package com.polarlooptheory.was.views.character.equipment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mikepenz.materialdrawer.DrawerBuilder
-import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.equipment.mVehicle
+import com.polarlooptheory.was.apiCalls.Equipment
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mWeapon
-import com.polarlooptheory.was.views.adapters.VehicleListAdapter
-import com.polarlooptheory.was.views.adapters.WeaponListAdapter
+import com.polarlooptheory.was.views.adapters.eq.character.WeaponListAdapter
 import kotlinx.android.synthetic.main.scenario_list.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class WeaponListFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -23,14 +25,21 @@ class WeaponListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val weaponList = listOf(
-            mWeapon("asd","dsa","asdsad"),
-            mWeapon("asd","dsa","asdsad"),
-            mWeapon("asd","dsa","asdsad")
-        )
+        val list: MutableList<mWeapon> = mutableListOf()
+        Scenario.connectedScenario.chosenCharacter?.equipment?.weapons?.forEach {
+            GlobalScope.launch(Dispatchers.Main) {
+                val req =
+                    async { Equipment.getWeapons(Scenario.connectedScenario.scenario, it) }.await()
+                if(!req.isNullOrEmpty()) list.addAll(req)
+            }
+        }
+
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
-        adapter = WeaponListAdapter(weaponList)
+        adapter =
+            WeaponListAdapter(
+                list
+            )
         view.scenarioListRec.adapter = adapter
         return view
     }

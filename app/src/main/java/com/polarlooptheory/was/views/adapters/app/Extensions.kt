@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.app
 
 import android.view.LayoutInflater
 import android.view.View

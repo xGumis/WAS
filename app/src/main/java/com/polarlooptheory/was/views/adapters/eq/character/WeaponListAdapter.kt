@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.adapters
+package com.polarlooptheory.was.views.adapters.eq.character
 
 import android.content.Context
 import android.view.Gravity
@@ -10,7 +10,7 @@ import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.model.equipment.mWeapon
-import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
+import com.polarlooptheory.was.views.adapters.app.inflate
 import kotlinx.android.synthetic.main.description_weapon.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
 

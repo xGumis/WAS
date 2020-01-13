@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.model.mCharacter
-import com.polarlooptheory.was.views.adapters.CharacterListAdapter
+import com.polarlooptheory.was.views.adapters.app.CharacterListAdapter
 import com.polarlooptheory.was.views.character.statistics.CharacterBaseInfoFragment
 import kotlinx.android.synthetic.main.characters.view.*
 
@@ -29,7 +29,10 @@ class CharacterListFragment : Fragment() {
         )
         linearLayoutManager = LinearLayoutManager(activity)
         view.char_list.layoutManager = linearLayoutManager
-        adapter = CharacterListAdapter(characterList)
+        adapter =
+            CharacterListAdapter(
+                characterList
+            )
         view.char_list.adapter = adapter
         return view
     }
