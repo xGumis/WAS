@@ -8,16 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.views.character.statistics.CharacterBackgroundFragment
-import kotlinx.android.synthetic.main.char_base_info.view.*
 import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class CustomFeatureFragment : Fragment() {
+class CustomTraitFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,5 +28,3 @@ class CustomFeatureFragment : Fragment() {
         return view
     }
 }
-
-

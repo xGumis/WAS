@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.adapters.abilities.custom
+package com.polarlooptheory.was.views.adapters.eq.custom
 
 import android.content.Context
 import android.view.Gravity
@@ -9,12 +9,13 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.model.abilities.mFeature
+import com.polarlooptheory.was.model.equipment.mGear
 import com.polarlooptheory.was.views.adapters.app.inflate
-import kotlinx.android.synthetic.main.char_list_row.view.*
-import kotlinx.android.synthetic.main.description_abilities.view.*
+import com.polarlooptheory.was.views.adapters.eq.character.GearListAdapter
+import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
+import kotlinx.android.synthetic.main.list_row.view.*
 
-class CustomFeatureListAdapter (private var featureList: List<mFeature>) : RecyclerView.Adapter<CustomFeatureListAdapter.Holder>() {
+class CustomGearListAdapter(private var gearList: List<mGear>) : RecyclerView.Adapter<CustomGearListAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.char_list_row, false)
         return Holder(
@@ -23,18 +24,18 @@ class CustomFeatureListAdapter (private var featureList: List<mFeature>) : Recyc
     }
 
     override fun getItemCount(): Int {
-        return featureList.size
+        return gearList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = featureList[position]
+        val item = gearList[position]
         holder.bind(item)
     }
 
 
     class Holder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
         private var view: View = v
-        private var feature : mFeature? = null
+        private var gear : mGear? = null
 
         init {
             v.setOnClickListener(this)
@@ -44,9 +45,10 @@ class CustomFeatureListAdapter (private var featureList: List<mFeature>) : Recyc
             if(v!=null){
                 val context = v.context
                 val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val view = inflater.inflate(R.layout.description_abilities,null)
-                view.detailsName.text = feature?.name
-                view.detailsDescription.text = feature?.description
+                val view = inflater.inflate(R.layout.description_vehicle_gear,null)
+                view.vehicleName.text = gear?.name
+                view.vehicleCost.text = gear?.cost
+                view.vehicleDescription.text = gear?.description
                 val popupWindow = PopupWindow(view,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,true)
@@ -55,9 +57,9 @@ class CustomFeatureListAdapter (private var featureList: List<mFeature>) : Recyc
             }
         }
 
-        fun bind(feature: mFeature){
-            this.feature = feature
-            view.charName.text = feature.name
+        fun bind(gear: mGear){
+            this.gear = gear
+            view.listItemName.text = gear.name
         }
 
     }

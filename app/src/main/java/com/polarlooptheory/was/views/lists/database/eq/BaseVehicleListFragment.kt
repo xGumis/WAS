@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.lists.database
+package com.polarlooptheory.was.views.lists.database.eq
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Equipment
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mVehicle
 import com.polarlooptheory.was.views.adapters.eq.database.BaseVehicleListAdapter
 import kotlinx.android.synthetic.main.scenario_list.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class BaseVehicleListFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -19,16 +25,17 @@ class BaseVehicleListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val vehicleList = listOf(
-            mVehicle("Koń"),
-            mVehicle("Powóz"),
-            mVehicle("Osioł")
-        )
+        val list: MutableList<mVehicle> = mutableListOf()
+        GlobalScope.launch(Dispatchers.Main) {
+            val req =
+                async { Equipment.getVehicles(Scenario.connectedScenario.scenario) }.await()
+            if(!req.isNullOrEmpty()) list.addAll(req)
+        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
             BaseVehicleListAdapter(
-                vehicleList
+                list
             )
         view.scenarioListRec.adapter = adapter
         return view

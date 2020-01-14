@@ -8,96 +8,53 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Equipment
+import com.polarlooptheory.was.apiCalls.Scenario
+import com.polarlooptheory.was.model.equipment.mArmor
+import com.polarlooptheory.was.model.equipment.mTool
+import com.polarlooptheory.was.views.adapters.eq.custom.CustomArmorListAdapter
+import com.polarlooptheory.was.views.adapters.eq.custom.CustomToolListAdapter
+import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
+import com.polarlooptheory.was.views.custom.eq.CustomToolFragment
+import kotlinx.android.synthetic.main.characters.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [CustomToolsListFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [CustomToolsListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CustomToolsListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var adapter: CustomToolListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return TextView(activity).apply {
-            setText(R.string.hello_blank_fragment)
+        val view = inflater.inflate(R.layout.characters, container, false)
+        view.buttonAddChar.text = "ADD TOOL"
+        view.buttonAddChar.setOnClickListener {
+            (parentFragment as NavigationHost).navigateTo(CustomToolFragment(),false)
         }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CustomToolsListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CustomToolsListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        val list: MutableList<mTool> = mutableListOf()
+        GlobalScope.launch(Dispatchers.Main) {
+            val req =
+                async { Equipment.getTools(Scenario.connectedScenario.scenario) }.await()
+            if(!req.isNullOrEmpty()){
+                req.forEach{
+                    if(it.custom) list.add(it)
                 }
             }
+        }
+        linearLayoutManager = LinearLayoutManager(activity)
+        view.char_list.layoutManager = linearLayoutManager
+        adapter =
+            CustomToolListAdapter(
+                list
+            )
+        view.char_list.adapter = adapter
+        return view
     }
 }

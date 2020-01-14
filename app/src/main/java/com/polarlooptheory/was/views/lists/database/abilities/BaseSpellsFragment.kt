@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.lists.custom.magic
+package com.polarlooptheory.was.views.lists.database.abilities
 
 import android.content.Context
 import android.net.Uri
@@ -9,52 +9,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mFeature
 import com.polarlooptheory.was.model.abilities.mSpell
-import com.polarlooptheory.was.views.adapters.abilities.custom.CustomFeatureAdapter
-import com.polarlooptheory.was.views.adapters.abilities.custom.CustomSpellListAdapter
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
-import com.polarlooptheory.was.views.custom.magic.CustomSpellFragment
-import kotlinx.android.synthetic.main.characters.view.*
+import com.polarlooptheory.was.views.adapters.abilities.database.BaseFeaturesAdapter
+import com.polarlooptheory.was.views.adapters.abilities.database.BaseSpellListAdapter
+import kotlinx.android.synthetic.main.scenario_list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
-class CustomSpellsListFragment : Fragment() {
+class BaseSpellsFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: CustomSpellListAdapter
+    private lateinit var adapter: BaseSpellListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.characters, container, false)
-        view.buttonAddChar.text = "ADD SPELL"
-        view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomSpellFragment(),false)
-        }
+        val view = inflater.inflate(R.layout.scenario_list, container, false)
         val list: MutableList<mSpell> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
             val req =
                 async { Abilities.getSpells(Scenario.connectedScenario.scenario) }.await()
-            if(!req.isNullOrEmpty()){
-                req.forEach{
-                    if(it.custom) list.add(it)
-                }
-            }        }
-
+            if(!req.isNullOrEmpty()) list.addAll(req)
+        }
         linearLayoutManager = LinearLayoutManager(activity)
-        view.char_list.layoutManager = linearLayoutManager
+        view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            CustomSpellListAdapter(
-                list
-            )
-        view.char_list.adapter = adapter
+            BaseSpellListAdapter(list)
+        view.scenarioListRec.adapter = adapter
         return view
     }
 }

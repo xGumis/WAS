@@ -26,15 +26,11 @@ import com.polarlooptheory.was.apiCalls.Login
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.model.mMessage
-import com.polarlooptheory.was.views.character.abilities.CharacterFeaturesFragment
-import com.polarlooptheory.was.views.character.abilities.CharacterLanguagesFragment
-import com.polarlooptheory.was.views.character.abilities.CharacterProficienciesFragment
-import com.polarlooptheory.was.views.character.abilities.CharacterTraitsFragment
 import com.polarlooptheory.was.views.character.equipment.*
 import com.polarlooptheory.was.views.character.statistics.*
 import com.polarlooptheory.was.views.lists.*
 import com.polarlooptheory.was.views.lists.custom.abilities.CustomFeatureListFragment
-import com.polarlooptheory.was.views.lists.custom.abilities.CustomLanguagesListFragment
+import com.polarlooptheory.was.views.lists.custom.abilities.CustomLanguageListFragment
 import com.polarlooptheory.was.views.lists.custom.abilities.CustomProficienciesListFragment
 import com.polarlooptheory.was.views.lists.custom.abilities.CustomTraitsListFragment
 import com.polarlooptheory.was.views.lists.custom.equipment.*
@@ -215,7 +211,7 @@ class ScenarioFragment : Fragment(),NavigationHost {
                 }),
                 SecondaryDrawerItem().withIdentifier(22).withName("Languages").withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                     override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
-                        navigateTo(CustomLanguagesListFragment(),false)
+                        navigateTo(CustomLanguageListFragment(),false)
                         return false
                     }
                 }),

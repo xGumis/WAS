@@ -1,4 +1,4 @@
-package com.polarlooptheory.was.views.lists.custom.equipment
+package com.polarlooptheory.was.views.lists.database.eq
 
 import android.content.Context
 import android.net.Uri
@@ -9,51 +9,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
-import com.polarlooptheory.was.model.equipment.mArmor
+import com.polarlooptheory.was.model.equipment.mVehicle
 import com.polarlooptheory.was.model.equipment.mWeapon
-import com.polarlooptheory.was.views.adapters.eq.custom.CustomArmorListAdapter
-import com.polarlooptheory.was.views.adapters.eq.custom.CustomWeaponListAdapter
-import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
-import com.polarlooptheory.was.views.custom.eq.CustomWeaponFragment
-import kotlinx.android.synthetic.main.characters.view.*
+import com.polarlooptheory.was.views.adapters.eq.database.BaseVehicleListAdapter
+import com.polarlooptheory.was.views.adapters.eq.database.BaseWeaponListAdapter
+import kotlinx.android.synthetic.main.scenario_list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
-class CustomWeaponsListFragment : Fragment() {
+class BaseWeaponListFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: CustomWeaponListAdapter
+    private lateinit var adapter: BaseWeaponListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.characters, container, false)
-        view.buttonAddChar.text = "ADD WEAPON"
-        view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomWeaponFragment(),false)
-        }
+        val view = inflater.inflate(R.layout.scenario_list, container, false)
         val list: MutableList<mWeapon> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
             val req =
                 async { Equipment.getWeapons(Scenario.connectedScenario.scenario) }.await()
-            if(!req.isNullOrEmpty()){
-                req.forEach{
-                    if(it.custom) list.add(it)
-                }
-            }        }
+            if(!req.isNullOrEmpty()) list.addAll(req)
+        }
         linearLayoutManager = LinearLayoutManager(activity)
-        view.char_list.layoutManager = linearLayoutManager
+        view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            CustomWeaponListAdapter(
+            BaseWeaponListAdapter(
                 list
             )
-        view.char_list.adapter = adapter
+        view.scenarioListRec.adapter = adapter
         return view
     }
 }
