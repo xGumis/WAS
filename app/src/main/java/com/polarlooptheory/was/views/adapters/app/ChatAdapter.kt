@@ -16,7 +16,7 @@ import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.model.mMessage
 
-class ChatAdapter(private val myDataset: Array<mMessage>) :
+class ChatAdapter(val messageList: MutableList<mMessage>) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
 
@@ -43,12 +43,12 @@ class ChatAdapter(private val myDataset: Array<mMessage>) :
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        if(myDataset[position].type == mMessage.Type.SYSTEM)
+        if(messageList[position].type == mMessage.Type.SYSTEM)
             holder.sender.text = "SYSTEM"
-        else holder.sender.text = myDataset[position].sender
-        holder.message.text = myDataset[position].content
+        else holder.sender.text = messageList[position].sender
+        holder.message.text = messageList[position].content
         val drawable = holder.background as GradientDrawable
-        when(myDataset[position].type){
+        when(messageList[position].type){
             mMessage.Type.WHISPER->{
                 drawable.setStroke(5, ContextCompat.getColor(holder.context,R.color.messagePrivateDark))
                 drawable.setColor(ContextCompat.getColor(holder.context,R.color.messagePrivate))
@@ -56,7 +56,7 @@ class ChatAdapter(private val myDataset: Array<mMessage>) :
                 holder.message.setTextColor(ContextCompat.getColor(holder.context,R.color.messagePrivateText))
             }
             mMessage.Type.OOC->{
-                if(myDataset[position].sender == Scenario.connectedScenario.scenario.gameMaster){
+                if(messageList[position].sender == Scenario.connectedScenario.scenario.gameMaster){
                     drawable.setStroke(5, ContextCompat.getColor(holder.context,R.color.messageGMDark))
                     drawable.setColor(ContextCompat.getColor(holder.context,R.color.messageGM))
                     holder.sender.setTextColor(ContextCompat.getColor(holder.context,R.color.messageGMText))
@@ -82,11 +82,11 @@ class ChatAdapter(private val myDataset: Array<mMessage>) :
                 holder.message.setTextColor(ContextCompat.getColor(holder.context,R.color.messageCharacterText))
             }
         }
-        if(myDataset[position].sender==User.username) holder.frame.gravity = Gravity.END
-        else if(Scenario.connectedScenario.charactersList.containsKey(myDataset[position].sender))
-            if(Scenario.connectedScenario.charactersList[myDataset[position].sender]?.owner == User.username)
+        if(messageList[position].sender==User.username) holder.frame.gravity = Gravity.END
+        else if(Scenario.connectedScenario.charactersList.containsKey(messageList[position].sender))
+            if(Scenario.connectedScenario.charactersList[messageList[position].sender]?.owner == User.username)
                 holder.frame.gravity = Gravity.END
         else  holder.frame.gravity = Gravity.START
         }
-    override fun getItemCount() = myDataset.size
+    override fun getItemCount() = messageList.size
 }

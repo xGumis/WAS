@@ -57,9 +57,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     ): View? {
         val view = inflater.inflate(R.layout.scenario, container, false)
         mainView = view
-        Scenario.joinWebsocket(Scenario.connectedScenario.scenario,this)
         makeDrawer(activity as Activity)
         initChat(context)
+        Scenario.joinWebsocket(Scenario.connectedScenario.scenario,this)
         return view
     }
 
@@ -88,11 +88,27 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                     position: Int,
                     drawerItem: IDrawerItem<*>
                 ): Boolean {
-                    Login.logout()
-                    (activity as NavigationHost).navigateTo(StartScreenFragment(), false)
+                    Scenario.clear()
+                    (activity as NavigationHost).navigateTo(ScenarioListFragment(), false)
                     return false
                 }
             })
+        val key = PrimaryDrawerItem().withIdentifier(34).withName("Show Key").withOnDrawerItemClickListener(
+                object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(
+                        view: View?,
+                        position: Int,
+                        drawerItem: IDrawerItem<*>
+                    ): Boolean {
+                        val alert = AlertDialog.Builder(activity)
+                        alert.setTitle("Scenario code")
+                        alert.setMessage(Scenario.connectedScenario.scenario.scenarioKey)
+                        alert.setNeutralButton("OK", null)
+                        val dialog: AlertDialog = alert.create()
+                        dialog.show()
+                        return false
+                    }
+                })
         val characters = PrimaryDrawerItem().withIdentifier(2).withName("Characters")
             .withDescription("Choose character...")
             .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
@@ -450,22 +466,6 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         return false
                     }
                 }),
-            SecondaryDrawerItem().withIdentifier(34).withName("Show Key").withOnDrawerItemClickListener(
-                object : Drawer.OnDrawerItemClickListener {
-                    override fun onItemClick(
-                        view: View?,
-                        position: Int,
-                        drawerItem: IDrawerItem<*>
-                    ): Boolean {
-                        val alert = AlertDialog.Builder(activity)
-                        alert.setTitle("Scenario code")
-                        alert.setMessage(Scenario.connectedScenario.scenario.scenarioKey)
-                        alert.setNeutralButton("OK", null)
-                        val dialog: AlertDialog = alert.create()
-                        dialog.show()
-                        return false
-                    }
-                }),
             SecondaryDrawerItem().withIdentifier(35).withName("Change Password").withOnDrawerItemClickListener(
                 object : Drawer.OnDrawerItemClickListener {
                     override fun onItemClick(
@@ -543,6 +543,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
         drawer.addItems(
             logout,
             leave,
+            key,
             characters,
             DividerDrawerItem(),
             statistics,
@@ -570,37 +571,21 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     private fun initChat(context: Context?) {
-        val dataset = arrayOf(
-            mMessage(content = "testowa wiadomość", sender = "admin", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość systemowa", type = mMessage.Type.SYSTEM),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(content = "wiadomość gracza", sender = "Gracz", type = mMessage.Type.OOC),
-            mMessage(
-                content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacus ex, dapibus et ipsum ut, pellentesque convallis augue. Proin at.",
-                sender = "Gracz",
-                type = mMessage.Type.OOC
-            ),
-            mMessage(
-                content = "wiadomość postaci",
-                sender = "Postać",
-                type = mMessage.Type.CHARACTER
-            ),
-            mMessage(
-                content = "wiadomość prywatna",
-                sender = "Postać",
-                type = mMessage.Type.WHISPER
-            )
-        )
+        val list = mutableListOf<mMessage>()
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = ChatAdapter(dataset)
+        val viewAdapter = ChatAdapter(list)
         chatRecyclerView = mainView.messageList.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
+        }
+        GlobalScope.launch(Dispatchers.Main) {
+            val req = async{Scenario.getMessages(Scenario.connectedScenario.scenario)}.await()
+            if(req){
+                list.addAll(Scenario.connectedScenario.messagesList.reversed())
+                chatRecyclerView.adapter?.notifyDataSetChanged()
+            }
+            else {(activity as MainActivity).makeToast(Settings.error_message);Settings.error_message = ""}
         }
         chat = mainView.animatedLayout
         chat.post { chat.translationY = chat.chatLayout.height.toFloat() }
@@ -608,6 +593,24 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
             if (!isUp) slideUp()
             else slideDown()
             isUp = !isUp
+        }
+        chat.buttonSend.setOnClickListener {
+            val text = chat.messageText.text.toString().trim()
+            val character = Scenario.connectedScenario.chosenCharacter
+            GlobalScope.launch {
+                val req = async {
+                    Scenario.sendMessage(
+                        Scenario.connectedScenario.scenario,
+                        character,
+                        text
+                    )
+                }.await()
+                if (!req) {
+                    (activity as MainActivity).makeToast(Settings.error_message)
+                    Settings.error_message = ""
+                }
+            }
+            chat.messageText.text?.clear()
         }
     }
 
@@ -631,31 +634,36 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     override fun OnReloadPlayers(scenario: mScenario) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun OnReloadCharacters(scenario: mScenario) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun OnReloadGM(scenario: mScenario) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun OnKick(scenario: mScenario) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Scenario.clear()
+        (activity as NavigationHost).navigateTo(ScenarioListFragment(),false)
     }
 
     override fun OnPrivateMessageRecieved(scenario: mScenario, message: mMessage) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        GlobalScope.launch(Dispatchers.Main) {
+            (chatRecyclerView.adapter as ChatAdapter).messageList.add(message)
+            chatRecyclerView.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun OnMessageRecieved(scenario: mScenario, message: mMessage) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        GlobalScope.launch(Dispatchers.Main) {
+        (chatRecyclerView.adapter as ChatAdapter).messageList.add(message)
+        chatRecyclerView.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun OnErrorRecieved(scenario: mScenario) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        (activity as MainActivity).makeToast(Settings.error_message)
+        Settings.error_message = ""
     }
 
 }

@@ -33,13 +33,6 @@ class StartScreenFragment : Fragment() {
         view.registerMain.setOnClickListener {
                 (activity as NavigationHost).navigateTo(RegisterFragment(),false)
         }
-        view.button.setOnClickListener {
-            GlobalScope.launch {
-                User.username = "admin"
-                Scenario.connectedScenario.scenario.gameMaster = "admin"
-                (activity as NavigationHost).navigateTo(ScenarioFragment(),false)
-            }
-        }
         return view
     }
 }

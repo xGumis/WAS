@@ -1327,9 +1327,9 @@ object Scenario {
     suspend fun sendMessage(
         scenario: mScenario,
         character: mCharacter?,
-        text: String,
+        text: String/*,
         whisperTarget: String,
-        type: mMessage.Type
+        type: mMessage.Type*/
     ): Boolean {
         val endpoint = "${Settings.server_address}action/message/scenario/${scenario.scenarioKey}"
         var success = false
@@ -1338,12 +1338,12 @@ object Scenario {
             if (character != null)
                 json.put("characterName", character.name)
             else json.put("characterName", null)
-            val content = when (type) {
+            /*val content = when (type) {
                 mMessage.Type.OOC -> "/ooc "
                 mMessage.Type.WHISPER -> "/whisper "
                 else -> ""
-            } + "$whisperTarget $text".trim()
-            json.put("content", content)
+            } + "$whisperTarget $text".trim()*///todo(Ulepszyc widok)
+            json.put("content", text)
             val (_, _, result) = endpoint.httpPost().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
             ).awaitStringResponseResult()
@@ -1353,7 +1353,7 @@ object Scenario {
                 }
                 is Result.Failure -> {
                     if (ApiErrorHandling.handleError(result.error))
-                        sendMessage(scenario, character, text, whisperTarget, type)
+                        sendMessage(scenario, character, text/*, whisperTarget, type*/)
                 }
             }
         }
@@ -1415,15 +1415,15 @@ object Scenario {
                         "characters" -> {
                             GlobalScope.launch {
                                 if(async{getCharacters(scenario)}.await())
-                                    listener.OnErrorRecieved(scenario)
-                                else listener.OnReloadCharacters(scenario)
+                                    listener.OnReloadCharacters(scenario)
+                                else listener.OnErrorRecieved(scenario)
                             }
                         }
                         "gameMaster" -> {
                             GlobalScope.launch {
                                 if(async{getPlayers(scenario)}.await())
-                                    listener.OnErrorRecieved(scenario)
-                                else listener.OnReloadGM(scenario)
+                                    listener.OnReloadGM(scenario)
+                                else listener.OnErrorRecieved(scenario)
                             }
                         }
                         else -> {
