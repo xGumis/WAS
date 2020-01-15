@@ -10,7 +10,7 @@ import com.polarlooptheory.was.views.adapters.app.TabListAdapter
 import kotlinx.android.synthetic.main.tab_list.view.*
 
 
-class TabListFragment(id: Int) : Fragment() {
+class TabListFragment(private val tabId: Int) : Fragment() {
 
     private lateinit var adapter: TabListAdapter
 
@@ -22,7 +22,7 @@ class TabListFragment(id: Int) : Fragment() {
         val view = inflater.inflate(R.layout.tab_list, container, false)
         adapter = TabListAdapter(
             childFragmentManager,
-            id
+            tabId
         )
         val vp = view.viewPager
         vp.adapter = adapter

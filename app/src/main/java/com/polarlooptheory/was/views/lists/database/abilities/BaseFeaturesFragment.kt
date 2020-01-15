@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mFeature
@@ -30,7 +32,8 @@ class BaseFeaturesFragment : Fragment() {
             GlobalScope.launch(Dispatchers.Main) {
                 val req =
                     async { Abilities.getFeatures(Scenario.connectedScenario.scenario) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
+                if(!req.isNullOrEmpty()) {list.addAll(req);adapter.notifyDataSetChanged()}
+                else{(activity as MainActivity).makeToast(Settings.error_message);Settings.error_message = ""}
         }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager

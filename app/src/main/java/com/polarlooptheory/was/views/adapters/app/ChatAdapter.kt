@@ -7,12 +7,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginEnd
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.apiCalls.Scenario
@@ -62,7 +59,7 @@ class ChatAdapter(private val myDataset: Array<mMessage>) :
                 if(myDataset[position].sender == Scenario.connectedScenario.scenario.gameMaster){
                     drawable.setStroke(5, ContextCompat.getColor(holder.context,R.color.messageGMDark))
                     drawable.setColor(ContextCompat.getColor(holder.context,R.color.messageGM))
-                    holder.sender.setTextColor(ContextCompat.getColor(holder.context,R.color.messageGMText));
+                    holder.sender.setTextColor(ContextCompat.getColor(holder.context,R.color.messageGMText))
                     holder.message.setTextColor(ContextCompat.getColor(holder.context,R.color.messageGMText))
                 }
                 else{

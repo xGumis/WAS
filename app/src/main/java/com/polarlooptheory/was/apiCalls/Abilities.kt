@@ -20,7 +20,7 @@ import org.json.JSONObject
  * Object for handling abilities
  */
 object Abilities {
-    private const val endpoint = "${Settings.server_address}api/v1/scenario/"
+    private const val endpoint = "${Settings.server_address}api/v1/scenario"
     //region Features
     /**
      * Receives a list of the [features][mFeature] in the [scenario]

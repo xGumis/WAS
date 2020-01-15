@@ -43,7 +43,4 @@ class MainActivity : AppCompatActivity(), NavigationHost, CoroutineScope by Main
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 }

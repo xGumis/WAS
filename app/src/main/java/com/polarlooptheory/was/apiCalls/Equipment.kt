@@ -20,7 +20,7 @@ import org.json.JSONObject
  * Object for handling equipment
  */
 object Equipment {
-    private const val endpoint = "${Settings.server_address}api/v1/scenario/"
+    private const val endpoint = "${Settings.server_address}api/v1/scenario"
     //region Armors
     /**
      * Receives a list of the [armors][mArmor] in the [scenario]
