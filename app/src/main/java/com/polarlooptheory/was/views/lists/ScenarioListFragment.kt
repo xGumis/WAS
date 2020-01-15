@@ -77,15 +77,11 @@ class ScenarioListFragment : Fragment() {
                 return false
             }
         })
-        val headerResult = AccountHeaderBuilder()
-            .withActivity(activity)
-            .addProfiles(
-                ProfileDrawerItem().withName(User.username)
-            )
-            .build()
 
-        drawer.resetDrawerContent()
-        drawer.setHeader(headerResult.view,true)
+        val hdr = (activity as MainActivity).header
+        hdr.clear()
+        hdr.addProfiles(ProfileDrawerItem().withName(User.username))
+        drawer.removeAllItems()
         drawer.setToolbar(activity,(activity as MainActivity).toolbar)
         drawer.addItems(
             logout,

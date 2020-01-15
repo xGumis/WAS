@@ -14,10 +14,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.ChatAdapter
+import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.*
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.IProfile
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
@@ -109,8 +112,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         return false
                     }
                 })
-        val characters = PrimaryDrawerItem().withIdentifier(2).withName("Characters")
-            .withDescription("Choose character...")
+        val charactersItem = PrimaryDrawerItem().withIdentifier(2).withName("Characters")
             .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(
                     view: View?,
@@ -530,21 +532,26 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                 })
         )
 
-
-        val headerResult = AccountHeaderBuilder()
-            .withActivity(activity)
-            .addProfiles(
-                ProfileDrawerItem().withName(User.username)
-            )
-            .build()
-        drawer.resetDrawerContent()
-        drawer.setHeader(headerResult.view, true)
+        GlobalScope.launch(Dispatchers.Main) {
+            val req = async{Scenario.getCharacters(Scenario.connectedScenario.scenario)}.await()
+            if(req){
+                val hdr = (activity as MainActivity).header
+                hdr.clear()
+                Scenario.connectedScenario.chosenCharacter = Scenario.connectedScenario.charactersList.values.firstOrNull()
+                Scenario.connectedScenario.charactersList.keys.forEach { hdr.addProfiles(ProfileDrawerItem().withName(it)) }
+            }
+            else{
+                (activity as MainActivity).makeToast(Settings.error_message)
+                Settings.error_message = ""
+            }
+        }
+        drawer.removeAllItems()
         drawer.setToolbar(activity, (activity as MainActivity).toolbar)
         drawer.addItems(
             logout,
             leave,
             key,
-            characters,
+            charactersItem,
             DividerDrawerItem(),
             statistics,
             abilities,
@@ -637,6 +644,15 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     override fun OnReloadCharacters(scenario: mScenario) {
+        val hdr = (activity as MainActivity).header
+        hdr.clear()
+        Scenario.connectedScenario.charactersList.keys.forEach { hdr.addProfiles(ProfileDrawerItem().withName(it)) }
+        val chosenProfile = hdr.profiles?.find{it.name.toString() == Scenario.connectedScenario.chosenCharacter?.name}
+        if(chosenProfile!=null)
+            hdr.setActiveProfile(chosenProfile,false)
+        else{
+            Scenario.connectedScenario.chosenCharacter = Scenario.connectedScenario.charactersList.values.firstOrNull()
+        }
     }
 
     override fun OnReloadGM(scenario: mScenario) {
@@ -665,5 +681,4 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
         (activity as MainActivity).makeToast(Settings.error_message)
         Settings.error_message = ""
     }
-
 }

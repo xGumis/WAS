@@ -82,11 +82,6 @@ class ChatAdapter(val messageList: MutableList<mMessage>) :
                 holder.message.setTextColor(ContextCompat.getColor(holder.context,R.color.messageCharacterText))
             }
         }
-        if(messageList[position].sender==User.username) holder.frame.gravity = Gravity.END
-        else if(Scenario.connectedScenario.charactersList.containsKey(messageList[position].sender))
-            if(Scenario.connectedScenario.charactersList[messageList[position].sender]?.owner == User.username)
-                holder.frame.gravity = Gravity.END
-        else  holder.frame.gravity = Gravity.START
         }
     override fun getItemCount() = messageList.size
 }

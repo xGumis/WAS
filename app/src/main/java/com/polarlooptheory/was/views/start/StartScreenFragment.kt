@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.util.DrawerUIUtils
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.apiCalls.Scenario
