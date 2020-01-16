@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat.ChatAdapter
@@ -60,6 +61,8 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     ): View? {
         val view = inflater.inflate(R.layout.scenario, container, false)
         mainView = view
+        childFragmentManager.addOnBackStackChangedListener {
+        }
         makeDrawer(activity as Activity)
         initChat(context)
         Scenario.joinWebsocket(Scenario.connectedScenario.scenario,this)
@@ -75,9 +78,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                     position: Int,
                     drawerItem: IDrawerItem<*>
                 ): Boolean {
-                    drawer.resetDrawerContent()
-                    drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = false
-                    drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    drawer.removeAllItems()
                     Login.logout()
                     (activity as NavigationHost).navigateTo(StartScreenFragment(), false)
                     return false
@@ -633,6 +634,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     override fun navigateTo(fragment: Fragment, addToBackStack: Boolean) {
         val transaction = childFragmentManager.beginTransaction().replace(R.id.container, fragment)
         if (addToBackStack) transaction.addToBackStack(null)
+        else for(x in 1..childFragmentManager.backStackEntryCount) childFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
         transaction.commit()
     }
 

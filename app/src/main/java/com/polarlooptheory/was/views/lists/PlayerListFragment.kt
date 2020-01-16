@@ -24,16 +24,13 @@ class PlayerListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<String> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
             val req = async{ Scenario.getPlayers(Scenario.connectedScenario.scenario)}.await()
             if(req) adapter.notifyDataSetChanged()
         }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
-        adapter = PlayerListAdapter(
-            list
-        )
+        adapter = PlayerListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

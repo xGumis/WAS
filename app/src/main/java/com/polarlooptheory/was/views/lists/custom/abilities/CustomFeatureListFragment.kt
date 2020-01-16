@@ -29,7 +29,7 @@ class CustomFeatureListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD FEATURE"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomFeatureFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomFeatureFragment(),true)
         }
         val list: MutableList<mFeature> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

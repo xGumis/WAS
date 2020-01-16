@@ -3,7 +3,6 @@ package com.example.chat
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.apiCalls.Scenario
-import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.model.mMessage
 
 class ChatAdapter(val messageList: MutableList<mMessage>) :

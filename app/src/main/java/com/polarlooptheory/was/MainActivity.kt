@@ -14,8 +14,10 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.polarlooptheory.was.apiCalls.Login
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.views.ScenarioFragment
+import com.polarlooptheory.was.views.lists.ScenarioListFragment
 import com.polarlooptheory.was.views.start.StartScreenFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -59,4 +61,25 @@ class MainActivity : AppCompatActivity(), NavigationHost, CoroutineScope by Main
         }
     }
 
+    override fun onBackPressed() {
+        val sfm = supportFragmentManager
+        val cfm = supportFragmentManager.fragments.firstOrNull()?.childFragmentManager
+        if( cfm!=null && cfm.backStackEntryCount>0){
+                cfm.popBackStackImmediate()
+        }
+        else if(supportFragmentManager.backStackEntryCount>0){
+            sfm.popBackStackImmediate()
+        }
+        else if(supportFragmentManager.fragments.firstOrNull() is ScenarioFragment){
+            Scenario.clear()
+            navigateTo(ScenarioListFragment(),false)
+        }
+        else if(supportFragmentManager.fragments.firstOrNull() is ScenarioListFragment){
+            Login.logout()
+            navigateTo(StartScreenFragment(),false)
+        }
+        else{
+            super.onBackPressed()
+        }
+    }
 }

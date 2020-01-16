@@ -28,6 +28,9 @@ class StartScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.start_screen, container, false)
+        val drawer = (activity as NavigationHost).getDrawer()
+        drawer.actionBarDrawerToggle?.isDrawerIndicatorEnabled = false
+        drawer.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         view.loginButton.setOnClickListener{
                 (activity as NavigationHost).navigateTo(LoginFragment(),false)
         }

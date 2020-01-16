@@ -4,9 +4,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Scenario
 import kotlinx.android.synthetic.main.player_list_row.view.*
 
-class PlayerListAdapter(private var playerList: List<String>) : RecyclerView.Adapter<PlayerListAdapter.Holder>() {
+class PlayerListAdapter() : RecyclerView.Adapter<PlayerListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.player_list_row, false)
@@ -16,24 +17,18 @@ class PlayerListAdapter(private var playerList: List<String>) : RecyclerView.Ada
     }
 
     override fun getItemCount(): Int {
-        return playerList.size
+        return Scenario.connectedScenario.scenario.onlinePlayers.size + Scenario.connectedScenario.scenario.offlinePlayers.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = playerList[position]
+        val players =  Scenario.connectedScenario.scenario.onlinePlayers+Scenario.connectedScenario.scenario.offlinePlayers
+        val item = players[position]
         holder.bind(item)
     }
 
 
-    class Holder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener{
+    class Holder(v: View) : RecyclerView.ViewHolder(v){
         private var view: View = v
-
-        init {
-            v.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-        }
 
         fun bind(player: String){
             view.charName.text = player
