@@ -1169,7 +1169,7 @@ object Scenario {
                         val tmpNote = mNote(
                             name = obj.getString("name"),
                             id = obj.getInt("id"),
-                            content = obj.getString("conten")
+                            content = obj.getString("content")
                         )
                         tmplist.add(tmpNote)
                     }

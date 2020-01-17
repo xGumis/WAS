@@ -32,6 +32,9 @@ object ApiErrorHandling {
             404 -> {
                 Settings.error_message = "Wrong address"
             }
+            else -> {
+                Settings.error_message = error.message.orEmpty()
+            }
         }
         return refreshed
     }

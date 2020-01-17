@@ -1,11 +1,14 @@
 package com.polarlooptheory.was.views.adapters.misc
 
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.mNote
 import com.polarlooptheory.was.views.NoteEditFragment
@@ -16,7 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class NoteListAdapter(private var noteList: List<mNote>,private val fragment: Fragment?) : RecyclerView.Adapter<NoteListAdapter.Holder>() {
+class NoteListAdapter() : RecyclerView.Adapter<NoteListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.char_list_row, false)
@@ -24,12 +27,12 @@ class NoteListAdapter(private var noteList: List<mNote>,private val fragment: Fr
     }
 
     override fun getItemCount(): Int {
-        return noteList.size
+        return Scenario.connectedScenario.notesList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = noteList[position]
-        holder.bind(item, fragment, this)
+        val item = Scenario.connectedScenario.notesList[position]
+        holder.bind(item,this)
     }
 
 
@@ -45,16 +48,20 @@ class NoteListAdapter(private var noteList: List<mNote>,private val fragment: Fr
             println("ass")
         }
 
-        fun bind(note: mNote,fragment: Fragment? ,adapter: NoteListAdapter){
+        fun bind(note: mNote,adapter: NoteListAdapter){
             this.note = note
             view.charName.text = note.name
             view.charEditButton.setOnClickListener {
-                (fragment as NavigationHost).navigateTo(NoteEditFragment(true, note),false)
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(NoteEditFragment(note),true)
             }
             view.deleteItemButton6.setOnClickListener {
                 GlobalScope.launch(Dispatchers.Main) {
                     val req = async{ Scenario.deleteNote(Scenario.connectedScenario.scenario, note.id)}.await()
                     if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
                 }
             }
         }
