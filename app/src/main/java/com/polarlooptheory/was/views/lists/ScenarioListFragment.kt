@@ -7,11 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -26,8 +24,11 @@ import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.views.adapters.app.ScenarioListAdapter
 import com.polarlooptheory.was.views.start.StartScreenFragment
+import kotlinx.android.synthetic.main.scenario_create.view.*
 import kotlinx.android.synthetic.main.scenario_list.view.*
 import kotlinx.android.synthetic.main.scenario_login.view.*
+import kotlinx.android.synthetic.main.scenario_login.view.password
+import kotlinx.android.synthetic.main.scenario_login.view.scenarioName
 import kotlinx.coroutines.*
 
 
@@ -72,7 +73,7 @@ class ScenarioListFragment : Fragment() {
                 alert.setPositiveButton("OK") { dialogInterface, _ ->
                     GlobalScope.launch(Dispatchers.Main) {
                         val req =
-                            async { Scenario.joinScenario(v.scenarioCode.text.toString(),v.editText5.text.toString()) }.await()
+                            async { Scenario.joinScenario(v.scenarioName.text.toString(),v.password.text.toString()) }.await()
                         if (req) {
                             refreshAdapter()
                         }
@@ -95,15 +96,22 @@ class ScenarioListFragment : Fragment() {
             override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
                 val alert = AlertDialog.Builder(activity)
                 alert.setTitle("Create scenario")
-                //val v = View(context).findViewById<LinearLayout>()
-                //alert.setView(v)
-                alert.setPositiveButton("OK") { _, _ ->
-                    /*GlobalScope.launch(Dispatchers.Main) {
+                val v = LayoutInflater.from(context).inflate(R.layout.scenario_create,null)
+                alert.setView(v)
+                alert.setPositiveButton("OK") { dialogInterface, _ ->
+                    GlobalScope.launch(Dispatchers.Main) {
                         val req =
-                            async { Scenario.createScenario() }.await()
+                            async { Scenario.createScenario(v.scenarioName.text.toString(),v.password.text.toString()) }.await()
                         if (!req.isNullOrEmpty()) {
+                            (activity as MainActivity).makeToast(req)
+                            refreshAdapter()
                         }
-                    }*/
+                        else {
+                            (activity as MainActivity).makeToast(Settings.error_message)
+                            Settings.error_message = ""
+                        }
+                    }
+                    dialogInterface.dismiss()
                 }
                 alert.setNegativeButton("Cancel"){
                         dialogInterface: DialogInterface, _ -> dialogInterface.cancel()
