@@ -32,6 +32,8 @@ import org.json.JSONObject
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
+import java.lang.Error
+import java.lang.Exception
 
 /**
  * Object for handling scenarios
@@ -636,7 +638,7 @@ object Scenario {
                         tmpCharacter.abilities.proficiencies = List(ab.getJSONArray("proficiencies").length()){ab.getJSONArray("proficiencies").getString(it)}
                         val eq = obj.getJSONObject("equipment")
                         tmpCharacter.equipment.armorClass = eq.getInt("armorClass")
-                        tmpCharacter.equipment.armors = List(eq.getJSONArray("armors").length()){eq.getJSONArray("armors").getString(it)}
+                        tmpCharacter.equipment.armors = List(eq.getJSONArray("armors").length()){val o = eq.getJSONArray("armors").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
                         val attcks = eq.getJSONArray("attacks")
                         tmpCharacter.equipment.attacks = List(attcks.length()){ mCharacter.Equipment.Attack(
                             bonus = attcks.getJSONObject(it).getInt("bonus"),
@@ -651,10 +653,10 @@ object Scenario {
                             gp = eq.getJSONObject("currency").getInt("gp"),
                             pp = eq.getJSONObject("currency").getInt("pp")
                         )
-                        tmpCharacter.equipment.gear = List(eq.getJSONArray("gear").length()){eq.getJSONArray("gear").getString(it)}
-                        tmpCharacter.equipment.tools = List(eq.getJSONArray("tools").length()){eq.getJSONArray("tools").getString(it)}
-                        tmpCharacter.equipment.vehicles = List(eq.getJSONArray("vehicles").length()){eq.getJSONArray("vehicles").getString(it)}
-                        tmpCharacter.equipment.weapons = List(eq.getJSONArray("weapons").length()){eq.getJSONArray("weapons").getString(it)}
+                        tmpCharacter.equipment.gear = List(eq.getJSONArray("gear").length()){val o =eq.getJSONArray("gear").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
+                        tmpCharacter.equipment.tools = List(eq.getJSONArray("tools").length()){val o =eq.getJSONArray("tools").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
+                        tmpCharacter.equipment.vehicles = List(eq.getJSONArray("vehicles").length()){val o =eq.getJSONArray("vehicles").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
+                        tmpCharacter.equipment.weapons = List(eq.getJSONArray("weapons").length()){val o =eq.getJSONArray("weapons").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
                         val spells = obj.getJSONObject("spells")
                         tmpCharacter.spells.baseStat = spells.getString("baseStat")
                         tmpCharacter.spells.spellAttackBonus = spells.getInt("spellAttackBonus")
@@ -1044,20 +1046,20 @@ object Scenario {
         scenario: mScenario,
         name: String,
         armorClass: Int? = null,
-        armors: List<String>? = null,
+        armors: List<Pair<String,Int>>? = null,
         attacks: List<mCharacter.Equipment.Attack>? = null,
         cp: Int? = null,
         sp: Int? = null,
         ep: Int? = null,
         gp: Int? = null,
         pp: Int? = null,
-        gear: List<String>? = null,
-        tools: List<String>? = null,
-        vehicles: List<String>? = null,
-        weapons: List<String>? = null
+        gear: List<Pair<String,Int>>? = null,
+        tools: List<Pair<String,Int>>? = null,
+        vehicles: List<Pair<String,Int>>? = null,
+        weapons: List<Pair<String,Int>>? = null
     ): Boolean {
         val endpoint =
-            "${Settings.server_address}action/update/characterAbilities/scenario/${scenario.scenarioKey}"
+            "${Settings.server_address}action/update/characterEquipment/scenario/${scenario.scenarioKey}"
         var success = false
         val json = JSONObject()
         json.put("name", name)
@@ -1078,7 +1080,7 @@ object Scenario {
         }
         json.put("attacks",attcs)
         val arm = JSONArray()
-        armors?.forEach { arm.put(it) }
+        armors?.forEach { arm.put(JSONObject().put("name",it.first).put("amount",it.second)) }
         json.put("armors",arm)
         val curr = JSONObject()
         if(cp != null)
@@ -1091,31 +1093,36 @@ object Scenario {
             curr.put("gp",gp)
         if(pp != null)
             curr.put("pp",pp)
+        json.put("currency",curr)
         val gr = JSONArray()
-        gear?.forEach { gr.put(it) }
+        gear?.forEach { gr.put(JSONObject().put("name",it.first).put("amount",it.second)) }
         json.put("gear",gr)
         val tl = JSONArray()
-        tools?.forEach { tl.put(it) }
+        tools?.forEach { tl.put(JSONObject().put("name",it.first).put("amount",it.second)) }
         json.put("tools",tl)
         val veh = JSONArray()
-        vehicles?.forEach { veh.put(it) }
+        vehicles?.forEach { veh.put(JSONObject().put("name",it.first).put("amount",it.second)) }
         json.put("vehicles",veh)
         val weap = JSONArray()
-        weapons?.forEach { weap.put(it) }
+        weapons?.forEach { weap.put(JSONObject().put("name",it.first).put("amount",it.second)) }
         json.put("weapons",weap)
         val client = HttpClient()
         runBlocking {
-            val result = client.patch<HttpResponse>(endpoint){
+            try {
+                val result = client.patch<HttpResponse>(endpoint){
                 header("Authorization","Bearer "+User.UserToken.access_token)
                 body = TextContent(json.toString(), ContentType.Application.Json)
             }
-            when (result.status.value) {
-                200 -> {
-                    success = true
+                when (result.status.value) {
+                    200 -> {
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
                 }
-                else -> {
-                    Settings.error_message = result.readText()
-                }
+            }catch(e:Exception){
+                println(e.message)
             }
             client.close()
         }
@@ -1158,7 +1165,7 @@ object Scenario {
         spells: List<String>? = null
     ): Boolean {
         val endpoint =
-            "${Settings.server_address}action/update/characterAbilities/scenario/${scenario.scenarioKey}"
+            "${Settings.server_address}action/update/characterSpells/scenario/${scenario.scenarioKey}"
         var success = false
         val json = JSONObject()
         json.put("name", name)

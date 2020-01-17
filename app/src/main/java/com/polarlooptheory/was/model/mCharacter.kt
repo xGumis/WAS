@@ -113,7 +113,7 @@ class mCharacter (
      */
     class Equipment{
         var armorClass: Int = 0
-        var armors: List<String> = listOf()
+        var armors: List<Pair<String,Int>> = listOf()
         var attacks: List<Attack> = listOf()
 
         /**
@@ -146,10 +146,10 @@ class mCharacter (
             var gp: Int = 0,
             var pp: Int = 0
         )
-        var gear: List<String> = listOf()
-        var tools: List<String> = listOf()
-        var vehicles: List<String> = listOf()
-        var weapons: List<String> = listOf()
+        var gear: List<Pair<String,Int>> = listOf()
+        var tools: List<Pair<String,Int>> = listOf()
+        var vehicles: List<Pair<String,Int>> = listOf()
+        var weapons: List<Pair<String,Int>> = listOf()
 
     }
     val equipment = Equipment()

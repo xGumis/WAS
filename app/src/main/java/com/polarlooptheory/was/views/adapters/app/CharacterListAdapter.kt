@@ -49,7 +49,7 @@ class CharacterListAdapter : RecyclerView.Adapter<CharacterListAdapter.Holder>()
             view.charName.text = char.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
-                    CharacterBaseInfoFragment(char),true)
+                    CharacterBaseInfoFragment(char,false),true)
             }
             view.deleteItemButton6.setOnClickListener {
                 GlobalScope.launch(Dispatchers.Main) {

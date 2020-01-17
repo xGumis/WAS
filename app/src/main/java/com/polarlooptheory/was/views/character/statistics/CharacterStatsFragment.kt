@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
@@ -27,7 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterStatsFragment(private val char: mCharacter?) : Fragment() {
+class CharacterStatsFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,25 +37,37 @@ class CharacterStatsFragment(private val char: mCharacter?) : Fragment() {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_stats, container, false)
         if(char!=null){
-            formStrength.setText(char.attributes.strength)
-            formDexterity.setText(char.attributes.dexterity)
-            formConstitution.setText(char.attributes.constitution)
-            formWisdom.setText(char.attributes.wisdom)
-            formIntelligence.setText(char.attributes.intelligence)
-            formCharisma.setText(char.attributes.charisma)
+            view.formStrength.setText(char.attributes.strength.toString())
+            view.formDexterity.setText(char.attributes.dexterity.toString())
+            view.formConstitution.setText(char.attributes.constitution.toString())
+            view.formWisdom.setText(char.attributes.wisdom.toString())
+            view.formIntelligence.setText(char.attributes.intelligence.toString())
+            view.formCharisma.setText(char.attributes.charisma.toString())
         }
         view.buttonSave2.setOnClickListener {
-            Scenario.dummyCharacter?.attributes?.strength = view.formStrength.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.dexterity = view.formDexterity.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.constitution = view.formConstitution.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.wisdom = view.formWisdom.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.intelligence = view.formIntelligence.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.charisma = view.formCharisma.text.toString().toInt()
+            val str = view.formStrength.text.toString()
+            if(str.isNotBlank() && str.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.strength = str.toInt()
+            val dex = view.formDexterity.text.toString()
+            if(dex.isNotBlank() && dex.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.dexterity = dex.toInt()
+            val con = view.formConstitution.text.toString()
+            if(con.isNotBlank() && con.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.constitution = con.toInt()
+            val wis = view.formWisdom.text.toString()
+            if(wis.isNotBlank() && wis.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.wisdom = wis.toInt()
+            val int = view.formIntelligence.text.toString()
+            if(int.isNotBlank() && int.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.intelligence = int.toInt()
+            val chr = view.formCharisma.text.toString()
+            if(chr.isNotBlank() && chr.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.charisma = chr.toInt()
             val character = Scenario.dummyCharacter
-            if(character?.name.isNullOrEmpty()) {
+            if(!character?.name.isNullOrEmpty()) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val req = when (char) {
-                        null -> async {
+                    val req = if(isNew)
+                        async {
                             Scenario.createCharacter(
                                 Scenario.connectedScenario.scenario,
                                 character!!.name,
@@ -74,78 +87,56 @@ class CharacterStatsFragment(private val char: mCharacter?) : Fragment() {
                                 character.race,
                                 character.speed
                             )
-                            Scenario.patchCharacterEquipment(Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.equipment.armorClass,
-                                character.equipment.armors,
-                                character.equipment.attacks,
-                                character.equipment.currency.cp,
-                                character.equipment.currency.sp,
-                                character.equipment.currency.ep,
-                                character.equipment.currency.gp,
-                                character.equipment.currency.pp,
-                                character.equipment.gear,
-                                character.equipment.tools,
-                                character.equipment.vehicles,
-                                character.equipment.weapons
-                            )
-                            Scenario.patchCharacterSpells(
-                                Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.spells.baseStat,
-                                character.spells.spellAttackBonus,
-                                character.spells.spellSaveDc,
-                                character.spells.spellSlots,
-                                character.spells.spells
-                            )
-                        }.await()
-                        else -> async {
-                            Scenario.patchCharacter(
-                                Scenario.connectedScenario.scenario,
-                                character!!.name,
-                                character.alignment,
-                                character.attributes,
-                                character.background,
-                                character.experience,
-                                character.health,
-                                character.hitDices,
-                                character.initiative,
-                                character.inspiration,
-                                character.level,
-                                character.passiveInsight,
-                                character.passivePerception,
-                                character.profession,
-                                character.proficiency,
-                                character.race,
-                                character.speed
-                            )
-                            Scenario.patchCharacterEquipment(Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.equipment.armorClass,
-                                character.equipment.armors,
-                                character.equipment.attacks,
-                                character.equipment.currency.cp,
-                                character.equipment.currency.sp,
-                                character.equipment.currency.ep,
-                                character.equipment.currency.gp,
-                                character.equipment.currency.pp,
-                                character.equipment.gear,
-                                character.equipment.tools,
-                                character.equipment.vehicles,
-                                character.equipment.weapons
-                            )
-                            Scenario.patchCharacterSpells(
-                                Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.spells.baseStat,
-                                character.spells.spellAttackBonus,
-                                character.spells.spellSaveDc,
-                                character.spells.spellSlots,
-                                character.spells.spells
-                            )
-                        }.await()
-                    }
-                    if (req) (parentFragment as NavigationHost).navigateTo(
+                        }.await() else async {
+                        Scenario.patchCharacter(
+                            Scenario.connectedScenario.scenario,
+                            character!!.name,
+                            character.alignment,
+                            character.attributes,
+                            character.background,
+                            character.experience,
+                            character.health,
+                            character.hitDices,
+                            character.initiative,
+                            character.inspiration,
+                            character.level,
+                            character.passiveInsight,
+                            character.passivePerception,
+                            character.profession,
+                            character.proficiency,
+                            character.race,
+                            character.speed
+                        )
+                    }.await()
+                    val req1 = async{
+                        Scenario.patchCharacterEquipment(
+                            Scenario.connectedScenario.scenario,
+                            character!!.name,
+                            character.equipment.armorClass,
+                            character.equipment.armors,
+                            character.equipment.attacks,
+                            character.equipment.currency.cp,
+                            character.equipment.currency.sp,
+                            character.equipment.currency.ep,
+                            character.equipment.currency.gp,
+                            character.equipment.currency.pp,
+                            character.equipment.gear,
+                            character.equipment.tools,
+                            character.equipment.vehicles,
+                            character.equipment.weapons
+                        )
+                    }.await()
+                    val req2 = async{Scenario.patchCharacterSpells(
+                        Scenario.connectedScenario.scenario,
+                        character!!.name,
+                        character.spells.baseStat,
+                        character.spells.spellAttackBonus,
+                        character.spells.spellSaveDc,
+                        character.spells.spellSlots,
+                        character.spells.spells
+                    )
+                    }.await()
+                    if (req&&req1&&req2) (parentFragment as NavigationHost).navigateTo(
                         CharacterListFragment(),
                         false
                     )
@@ -154,28 +145,53 @@ class CharacterStatsFragment(private val char: mCharacter?) : Fragment() {
                         Settings.error_message = ""
                     }
                 }
-            }
+            }else
+                (activity as MainActivity).makeToast("Character name cannot be empty")
         }
         view.buttonNext.setOnClickListener {
-            Scenario.dummyCharacter?.attributes?.strength = view.formStrength.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.dexterity = view.formDexterity.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.constitution = view.formConstitution.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.wisdom = view.formWisdom.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.intelligence = view.formIntelligence.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.charisma = view.formCharisma.text.toString().toInt()
+            val str = view.formStrength.text.toString()
+            if(str.isNotBlank() && str.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.strength = str.toInt()
+            val dex = view.formDexterity.text.toString()
+            if(dex.isNotBlank() && dex.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.dexterity = dex.toInt()
+            val con = view.formConstitution.text.toString()
+            if(con.isNotBlank() && con.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.constitution = con.toInt()
+            val wis = view.formWisdom.text.toString()
+            if(wis.isNotBlank() && wis.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.wisdom = wis.toInt()
+            val int = view.formIntelligence.text.toString()
+            if(int.isNotBlank() && int.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.intelligence = int.toInt()
+            val chr = view.formCharisma.text.toString()
+            if(chr.isNotBlank() && chr.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.charisma = chr.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(char), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(char,isNew), false)
             }
         }
         view.buttonBack.setOnClickListener {
-            Scenario.dummyCharacter?.attributes?.strength = view.formStrength.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.dexterity = view.formDexterity.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.constitution = view.formConstitution.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.wisdom = view.formWisdom.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.intelligence = view.formIntelligence.text.toString().toInt()
-            Scenario.dummyCharacter?.attributes?.charisma = view.formCharisma.text.toString().toInt()
+            val str = view.formStrength.text.toString()
+            if(str.isNotBlank() && str.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.strength = str.toInt()
+            val dex = view.formDexterity.text.toString()
+            if(dex.isNotBlank() && dex.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.dexterity = dex.toInt()
+            val con = view.formConstitution.text.toString()
+            if(con.isNotBlank() && con.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.constitution = con.toInt()
+            val wis = view.formWisdom.text.toString()
+            if(wis.isNotBlank() && wis.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.wisdom = wis.toInt()
+            val int = view.formIntelligence.text.toString()
+            if(int.isNotBlank() && int.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.intelligence = int.toInt()
+            val chr = view.formCharisma.text.toString()
+            if(chr.isNotBlank() && chr.isDigitsOnly())
+                Scenario.dummyCharacter?.attributes?.charisma = chr.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterBackgroundFragment(char), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterBackgroundFragment(char,isNew), false)
             }
         }
         return view

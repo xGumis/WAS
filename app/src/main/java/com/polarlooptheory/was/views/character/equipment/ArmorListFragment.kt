@@ -29,7 +29,7 @@ class ArmorListFragment : Fragment() {
         Scenario.connectedScenario.chosenCharacter?.equipment?.armors?.forEach {
             GlobalScope.launch(Dispatchers.Main) {
                 val req =
-                    async { Equipment.getArmors(Scenario.connectedScenario.scenario, it) }.await()
+                    async { Equipment.getArmors(Scenario.connectedScenario.scenario, it.first) }.await()
                 if(!req.isNullOrEmpty()) list.addAll(req)
             }
         }

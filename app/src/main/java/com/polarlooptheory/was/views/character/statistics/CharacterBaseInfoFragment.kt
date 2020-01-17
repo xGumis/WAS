@@ -1,9 +1,11 @@
 package com.polarlooptheory.was.views.character.statistics
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
@@ -24,7 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
+class CharacterBaseInfoFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,25 +35,26 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_base_info, container, false)
         if (char != null) {
-            formCharName.setText(char.name)
-            if (!char.name.isNullOrEmpty()) formCharName.isEnabled = false
-            formRace.setText(char.race)
-            formAlignment.setText(char.alignment)
-            formSpeed.setText(char.speed)
-            formAC.setText(char.equipment.armorClass)
+            view.formCharName.setText(char.name)
+            if (!isNew) {view.formCharName.inputType = InputType.TYPE_NULL;view.formCharName.isFocusable = false}
+            view.formRace.setText(char.race)
+            view.formAlignment.setText(char.alignment)
+            view.formSpeed.setText(char.speed)
+            view.formAC.setText(char.equipment.armorClass.toString())
         }
         view.buttonSave4.setOnClickListener {
             Scenario.dummyCharacter?.name = view.formCharName.text.toString()
             Scenario.dummyCharacter?.race = view.formRace.text.toString()
             Scenario.dummyCharacter?.alignment = view.formAlignment.text.toString()
             Scenario.dummyCharacter?.speed = view.formSpeed.text.toString()
-            Scenario.dummyCharacter?.equipment?.armorClass =
-                view.formBackground.text.toString().toInt()
+            val ac = view.formAC.text.toString()
+            if(ac.isNotBlank() && ac.isDigitsOnly())
+                Scenario.dummyCharacter?.equipment?.armorClass = ac.toInt()
             val character = Scenario.dummyCharacter
-            if (character?.name.isNullOrEmpty()) {
+            if (!character?.name.isNullOrEmpty()) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val req = when (char) {
-                        null -> async {
+                    val req = if(isNew)
+                        async {
                             Scenario.createCharacter(
                                 Scenario.connectedScenario.scenario,
                                 character!!.name,
@@ -71,33 +74,7 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
                                 character.race,
                                 character.speed
                             )
-                            Scenario.patchCharacterEquipment(
-                                Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.equipment.armorClass,
-                                character.equipment.armors,
-                                character.equipment.attacks,
-                                character.equipment.currency.cp,
-                                character.equipment.currency.sp,
-                                character.equipment.currency.ep,
-                                character.equipment.currency.gp,
-                                character.equipment.currency.pp,
-                                character.equipment.gear,
-                                character.equipment.tools,
-                                character.equipment.vehicles,
-                                character.equipment.weapons
-                            )
-                            Scenario.patchCharacterSpells(
-                                Scenario.connectedScenario.scenario,
-                                character.name,
-                                character.spells.baseStat,
-                                character.spells.spellAttackBonus,
-                                character.spells.spellSaveDc,
-                                character.spells.spellSlots,
-                                character.spells.spells
-                            )
-                        }.await()
-                        else -> async {
+                        }.await() else async {
                             Scenario.patchCharacter(
                                 Scenario.connectedScenario.scenario,
                                 character!!.name,
@@ -117,9 +94,11 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
                                 character.race,
                                 character.speed
                             )
+                        }.await()
+                    val req1 = async{
                             Scenario.patchCharacterEquipment(
                                 Scenario.connectedScenario.scenario,
-                                character.name,
+                                character!!.name,
                                 character.equipment.armorClass,
                                 character.equipment.armors,
                                 character.equipment.attacks,
@@ -133,9 +112,10 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
                                 character.equipment.vehicles,
                                 character.equipment.weapons
                             )
-                            Scenario.patchCharacterSpells(
+                    }.await()
+                    val req2 = async{Scenario.patchCharacterSpells(
                                 Scenario.connectedScenario.scenario,
-                                character.name,
+                                character!!.name,
                                 character.spells.baseStat,
                                 character.spells.spellAttackBonus,
                                 character.spells.spellSaveDc,
@@ -143,8 +123,8 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
                                 character.spells.spells
                             )
                         }.await()
-                    }
-                    if (req) (parentFragment as NavigationHost).navigateTo(
+                    if (req&&req1&&req2)
+                        (parentFragment as NavigationHost).navigateTo(
                         CharacterListFragment(),
                         false
                     )
@@ -153,17 +133,20 @@ class CharacterBaseInfoFragment(private val char: mCharacter?) : Fragment() {
                         Settings.error_message = ""
                     }
                 }
-            }
+            }else
+                (activity as MainActivity).makeToast("Character name cannot be empty")
         }
             view.buttonNext.setOnClickListener {
                 Scenario.dummyCharacter?.name = view.formCharName.text.toString()
                 Scenario.dummyCharacter?.race = view.formRace.text.toString()
                 Scenario.dummyCharacter?.alignment = view.formAlignment.text.toString()
                 Scenario.dummyCharacter?.speed = view.formSpeed.text.toString()
-                Scenario.dummyCharacter?.equipment?.armorClass = view.formBackground.text.toString().toInt()
+                val ac = view.formAC.text.toString()
+                if(ac.isNotBlank() && ac.isDigitsOnly())
+                    Scenario.dummyCharacter?.equipment?.armorClass = ac.toInt()
                 GlobalScope.launch {
                     (parentFragment as NavigationHost).navigateTo(
-                        CharacterBackgroundFragment(char),
+                        CharacterBackgroundFragment(char,isNew),
                         false
                     )
                 }

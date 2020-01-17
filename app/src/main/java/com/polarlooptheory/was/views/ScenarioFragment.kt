@@ -155,7 +155,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterBaseInfoFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterBaseInfoFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 }),
@@ -166,7 +168,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterBackgroundFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterBackgroundFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 }),
@@ -177,7 +181,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterStatsFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterStatsFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 }),
@@ -188,7 +194,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterHealthFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterHealthFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 }),
@@ -199,7 +207,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterProficiencyFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterProficiencyFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 }),
@@ -210,7 +220,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterMagicFragment(Scenario.dummyCharacter), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
+                            navigateTo(CharacterMagicFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
                 })
@@ -324,11 +336,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null) {
+                        if(Scenario.connectedScenario.chosenCharacter!=null)
                             navigateTo(MoneyFragment(), false)
-                            return false
-                        }
-                        else return false
+                        else (activity as MainActivity).makeToast("Character is not chosen")
+                        return false
                     }
                 })
 
@@ -664,6 +675,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     override fun OnReloadCharacters(scenario: mScenario) {
+        GlobalScope.launch(Dispatchers.Main) {
         val hdr = (activity as MainActivity).header
         hdr.clear()
         Scenario.connectedScenario.charactersList.keys.forEach { hdr.addProfiles(ProfileDrawerItem().withName(it)) }
@@ -672,6 +684,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
             hdr.setActiveProfile(chosenProfile,false)
         else{
             Scenario.connectedScenario.chosenCharacter = Scenario.connectedScenario.charactersList.values.firstOrNull()
+        }
         }
     }
 

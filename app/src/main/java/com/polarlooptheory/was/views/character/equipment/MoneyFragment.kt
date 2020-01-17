@@ -31,25 +31,26 @@ class MoneyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.money, container, false)
-        editCopper.setText(Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.cp!!)
-        editSilver.setText(Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.sp!!)
-        editGold.setText(Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.gp!!)
-        editElectrum.setText(Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.ep!!)
-        editPlatinum.setText(Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.pp!!)
+        view.editCopper.setText(Scenario.connectedScenario.chosenCharacter!!.equipment.currency.cp.toString())
+        view.editSilver.setText(Scenario.connectedScenario.chosenCharacter!!.equipment.currency.sp.toString())
+        view.editGold.setText(Scenario.connectedScenario.chosenCharacter!!.equipment.currency.gp.toString())
+        view.editElectrum.setText(Scenario.connectedScenario.chosenCharacter!!.equipment.currency.ep.toString())
+        view.editPlatinum.setText(Scenario.connectedScenario.chosenCharacter!!.equipment.currency.pp.toString())
+        Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
 
         view.buttonSave.setOnClickListener {
-            Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.cp = view.editCopper.text.toString().toInt()
-            Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.sp = view.editSilver.text.toString().toInt()
-            Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.gp = view.editGold.text.toString().toInt()
-            Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.ep = view.editElectrum.text.toString().toInt()
-            Scenario.connectedScenario.chosenCharacter?.equipment?.currency?.pp = view.editPlatinum.text.toString().toInt()
-            val character = Scenario.connectedScenario.chosenCharacter
+            val character = Scenario.dummyCharacter
+            character!!.equipment.currency.cp = view.editCopper.text.toString().toInt()
+            character.equipment.currency.sp = view.editSilver.text.toString().toInt()
+            character.equipment.currency.gp = view.editGold.text.toString().toInt()
+            character.equipment.currency.ep = view.editElectrum.text.toString().toInt()
+            character.equipment.currency.pp = view.editPlatinum.text.toString().toInt()
                 GlobalScope.launch(Dispatchers.Main) {
                     val req =
                         async {
                             Scenario.patchCharacterEquipment(
                                 Scenario.connectedScenario.scenario,
-                                character!!.name,
+                                character.name,
                                 character.equipment.armorClass,
                                 character.equipment.armors,
                                 character.equipment.attacks,

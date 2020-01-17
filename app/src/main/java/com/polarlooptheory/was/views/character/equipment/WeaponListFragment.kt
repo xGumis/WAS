@@ -29,7 +29,7 @@ class WeaponListFragment : Fragment() {
         Scenario.connectedScenario.chosenCharacter?.equipment?.weapons?.forEach {
             GlobalScope.launch(Dispatchers.Main) {
                 val req =
-                    async { Equipment.getWeapons(Scenario.connectedScenario.scenario, it) }.await()
+                    async { Equipment.getWeapons(Scenario.connectedScenario.scenario, it.first) }.await()
                 if(!req.isNullOrEmpty()) list.addAll(req)
             }
         }
