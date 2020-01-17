@@ -324,8 +324,11 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(MoneyFragment(), false)
-                        return false
+                        if(Scenario.connectedScenario.chosenCharacter!=null) {
+                            navigateTo(MoneyFragment(), false)
+                            return false
+                        }
+                        else return false
                     }
                 })
 
