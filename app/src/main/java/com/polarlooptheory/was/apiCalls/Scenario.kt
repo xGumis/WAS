@@ -1,13 +1,10 @@
 package com.polarlooptheory.was.apiCalls
 
 import android.util.Log
+import com.github.kittinunf.fuel.*
 import com.github.kittinunf.fuel.core.extensions.authentication
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
-import com.github.kittinunf.fuel.httpDelete
-import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.fuel.httpPatch
-import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.model.*
@@ -18,6 +15,13 @@ import com.polarlooptheory.was.model.types.mCondition
 import com.polarlooptheory.was.model.types.mDamageType
 import com.polarlooptheory.was.model.types.mMagicSchool
 import com.polarlooptheory.was.model.types.mWeaponProperty
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.patch
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -897,8 +901,23 @@ object Scenario {
             json.put("race", race)
         if (speed != null)
             json.put("speed", speed)
-
-
+        val client = HttpClient()
+        runBlocking {
+            val result = client.patch<HttpResponse>(endpoint){
+                header("Authorization","Bearer "+User.UserToken.access_token)
+                body = TextContent(json.toString(), ContentType.Application.Json)
+            }
+            when (result.status.value) {
+                200 -> {
+                    success = true
+                }
+                else -> {
+                    Settings.error_message = result.readText()
+                }
+            }
+            client.close()
+        }
+        /*To use when fixed
         runBlocking {
             val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
@@ -930,7 +949,7 @@ object Scenario {
                         )
                 }
             }
-        }
+        }*/
         return success
     }
 
@@ -969,6 +988,23 @@ object Scenario {
         val tr = JSONArray()
         traits?.forEach { tr.put(it) }
         json.put("traits",tr)
+        val client = HttpClient()
+        runBlocking {
+            val result = client.patch<HttpResponse>(endpoint){
+                header("Authorization","Bearer "+User.UserToken.access_token)
+                body = TextContent(json.toString(), ContentType.Application.Json)
+            }
+            when (result.status.value) {
+                200 -> {
+                    success = true
+                }
+                else -> {
+                    Settings.error_message = result.readText()
+                }
+            }
+            client.close()
+        }
+        /*To use when fixed
         runBlocking {
             val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
@@ -982,7 +1018,7 @@ object Scenario {
                         patchCharacterAbilities(scenario, name, features, languages, proficiencies, traits)
                 }
             }
-        }
+        }*/
         return success
     }
     
@@ -1067,6 +1103,23 @@ object Scenario {
         val weap = JSONArray()
         weapons?.forEach { weap.put(it) }
         json.put("weapons",weap)
+        val client = HttpClient()
+        runBlocking {
+            val result = client.patch<HttpResponse>(endpoint){
+                header("Authorization","Bearer "+User.UserToken.access_token)
+                body = TextContent(json.toString(), ContentType.Application.Json)
+            }
+            when (result.status.value) {
+                200 -> {
+                    success = true
+                }
+                else -> {
+                    Settings.error_message = result.readText()
+                }
+            }
+            client.close()
+        }
+        /*To use when fixed
         runBlocking {
             val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
@@ -1080,7 +1133,7 @@ object Scenario {
                         patchCharacterEquipment(scenario, name, armorClass, armors, attacks, cp, sp, ep, gp, pp, gear, tools, vehicles, weapons)
                 }
             }
-        }
+        }*/
         return success
     }
     
@@ -1130,6 +1183,23 @@ object Scenario {
         val spls = JSONArray()
         spells?.forEach { spls.put(it) }
         json.put("spells",spls)
+        val client = HttpClient()
+        runBlocking {
+            val result = client.patch<HttpResponse>(endpoint){
+                header("Authorization","Bearer "+User.UserToken.access_token)
+                body = TextContent(json.toString(), ContentType.Application.Json)
+            }
+            when (result.status.value) {
+                200 -> {
+                    success = true
+                }
+                else -> {
+                    Settings.error_message = result.readText()
+                }
+            }
+            client.close()
+        }
+        /*To use when fixed
         runBlocking {
             val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
@@ -1143,7 +1213,7 @@ object Scenario {
                         patchCharacterSpells(scenario, name, baseStat, spellAttackBonus, spellSaveDc, spellSlots, spells)
                 }
             }
-        }
+        }*/
         return success
     }
 
@@ -1254,6 +1324,24 @@ object Scenario {
         val json = JSONObject()
         json.put("name", name)
         json.put("content", content)
+        val client = HttpClient()
+        runBlocking {
+            val result = client.patch<HttpResponse>(endpoint){
+                header("Authorization","Bearer "+User.UserToken.access_token)
+                body = TextContent(json.toString(), ContentType.Application.Json)
+            }
+            when (result.status.value) {
+            200 -> {
+                getNotes(scenario)
+                success = true
+            }
+            else -> {
+                Settings.error_message = result.readText()
+            }
+            }
+            client.close()
+        }
+        /*To use when fixed
         runBlocking {
             val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
@@ -1268,7 +1356,7 @@ object Scenario {
                         patchNote(scenario, id, name, content)
                 }
             }
-        }
+        }*/
         return success
     }
     //endregion

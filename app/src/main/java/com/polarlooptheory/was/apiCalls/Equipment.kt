@@ -10,8 +10,16 @@ import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.model.User
+import com.polarlooptheory.was.model.abilities.mTrait
 import com.polarlooptheory.was.model.equipment.*
 import com.polarlooptheory.was.model.mScenario
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.patch
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
@@ -270,6 +278,42 @@ object Equipment {
             json.put("weight", weight)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpArmor = mArmor(
+                            name = name,
+                            custom = true,
+                            armorClass = mArmor.ArmorClass(
+                                base = ac_base ?: 0,
+                                dexBonus = ac_dexBonus ?: false,
+                                maxBonus = ac_maxBonus ?: 0
+                            ))
+                        if (cost != null)
+                            tmpArmor.cost = cost
+                        if (stealthDisadvantage != null)
+                            tmpArmor.stealthDisadvantage = stealthDisadvantage
+                        if (strMinimum != null)
+                            tmpArmor.strMinimum = strMinimum
+                        if (weight != null)
+                            tmpArmor.weight = weight
+                        if (visible != null)
+                            tmpArmor.visible = visible
+                        Scenario.loadedResources.armors[tmpArmor.name] = tmpArmor
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -313,7 +357,7 @@ object Equipment {
                             )
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -511,6 +555,35 @@ object Equipment {
                 json.put("weight", weight)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpGear = mGear(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpGear.description = description
+                        if (cost != null)
+                            tmpGear.cost = cost
+                        if (weight != null)
+                            tmpGear.weight = weight
+                        if (visible != null)
+                            tmpGear.visible = visible
+                        Scenario.loadedResources.gear[tmpGear.name] = tmpGear
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -536,7 +609,7 @@ object Equipment {
                             patchGear(scenario, name, description, cost, weight, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -745,6 +818,37 @@ object Equipment {
                 json.put("weight", weight)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpTool = mTool(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpTool.description = description
+                        if (category != null)
+                            tmpTool.category = category
+                        if (cost != null)
+                            tmpTool.cost = cost
+                        if (weight != null)
+                            tmpTool.weight = weight
+                        if (visible != null)
+                            tmpTool.visible = visible
+                        Scenario.loadedResources.tools[tmpTool.name] = tmpTool
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -772,7 +876,7 @@ object Equipment {
                             patchTool(scenario, name, description, category, cost, weight, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -971,6 +1075,35 @@ object Equipment {
                 json.put("weight", weight)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpVehicle = mVehicle(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpVehicle.description = description
+                        if (cost != null)
+                            tmpVehicle.cost = cost
+                        if (weight != null)
+                            tmpVehicle.weight = weight
+                        if (visible != null)
+                            tmpVehicle.visible = visible
+                        Scenario.loadedResources.vehicles[tmpVehicle.name] = tmpVehicle
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -996,7 +1129,7 @@ object Equipment {
                             patchVehicle(scenario, name, description, cost, weight, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -1305,6 +1438,53 @@ object Equipment {
             json.put("weight", weight)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpWeapon = mWeapon(
+                            name = name,
+                            custom = true)
+
+                        tmpWeapon.damageType = damageType
+                        if (category != null)
+                            tmpWeapon.category = category
+                        if (damageBonus != null)
+                            tmpWeapon.damageBonus = damageBonus
+                        if (damageDice != null)
+                            tmpWeapon.damageDice = damageDice
+                        if (longRange != null)
+                            tmpWeapon.longRange = longRange
+                        if (longThrowRange != null)
+                            tmpWeapon.longThrowRange = longThrowRange
+                        if (normalRange != null)
+                            tmpWeapon.normalRange = normalRange
+                        if (normalThrowRange != null)
+                            tmpWeapon.normalThrowRange = normalThrowRange
+                        if (properties != null)
+                            tmpWeapon.properties = properties
+                        if (weaponRange != null)
+                            tmpWeapon.weaponRange = weaponRange
+                        if (cost != null)
+                            tmpWeapon.cost = cost
+                        if (weight != null)
+                            tmpWeapon.weight = weight
+                        if (visible != null)
+                            tmpWeapon.visible = visible
+                        Scenario.loadedResources.weapons[tmpWeapon.name] = tmpWeapon
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -1363,7 +1543,7 @@ object Equipment {
                             )
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"

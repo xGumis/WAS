@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R

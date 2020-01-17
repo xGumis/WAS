@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
@@ -61,10 +62,9 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     ): View? {
         val view = inflater.inflate(R.layout.scenario, container, false)
         mainView = view
-        childFragmentManager.addOnBackStackChangedListener {
-        }
+        navigateTo(CharacterListFragment(),false)
         makeDrawer(activity as Activity)
-        initChat(context)
+        initChat()
         Scenario.joinWebsocket(Scenario.connectedScenario.scenario,this)
         return view
     }
@@ -525,7 +525,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         }
                         alert.setNegativeButton(
                             "No",
-                            DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int -> dialogInterface.cancel() })
+                            DialogInterface.OnClickListener { dialogInterface: DialogInterface, _ -> dialogInterface.cancel() })
                         val dialog: AlertDialog = alert.create()
                         dialog.show()
                         return false
@@ -578,7 +578,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
             drawer.addItemAtPosition(management, 9)
     }
 
-    private fun initChat(context: Context?) {
+    private fun initChat() {
         val list = mutableListOf<mMessage>()
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = ChatAdapter(list)
@@ -619,6 +619,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                 }
             }
             chat.messageText.text?.clear()
+            (context as MainActivity).hideKeyboard()
         }
     }
 
@@ -627,6 +628,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     private fun slideDown() {
+        (context as MainActivity).hideKeyboard()
         val h = chat.chatLayout.height.toFloat()
         chat.animate().translationY(h).setDuration(500).start()
     }
@@ -635,6 +637,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
         val transaction = childFragmentManager.beginTransaction().replace(R.id.container, fragment)
         if (addToBackStack) transaction.addToBackStack(null)
         else for(x in 1..childFragmentManager.backStackEntryCount) childFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        (context as MainActivity).hideKeyboard()
         transaction.commit()
     }
 

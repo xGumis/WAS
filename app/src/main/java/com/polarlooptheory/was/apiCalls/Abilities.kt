@@ -12,6 +12,13 @@ import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.model.User
 import com.polarlooptheory.was.model.abilities.*
 import com.polarlooptheory.was.model.mScenario
+import io.ktor.client.HttpClient
+import io.ktor.client.request.header
+import io.ktor.client.request.patch
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
@@ -189,6 +196,31 @@ object Abilities {
                 json.put("description", description)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpFeature = mFeature(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpFeature.description = description
+                        if (visible != null)
+                            tmpFeature.visible = visible
+                        Scenario.loadedResources.features[tmpFeature.name] = tmpFeature
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -210,7 +242,7 @@ object Abilities {
                             patchFeature(scenario, name, description, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -397,6 +429,33 @@ object Abilities {
                 json.put("type", type)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpLanguage = mLanguage(
+                            name = name,
+                            custom = true)
+                        if (script != null)
+                            tmpLanguage.script = script
+                        if (type != null)
+                            tmpLanguage.type = type
+                        if (visible != null)
+                            tmpLanguage.visible = visible
+                        Scenario.loadedResources.languages[tmpLanguage.name] = tmpLanguage
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -420,7 +479,7 @@ object Abilities {
                             patchLanguage(scenario, name, type, script, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -596,6 +655,31 @@ object Abilities {
                 json.put("type", type)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpProficiency = mProficiency(
+                            name = name,
+                            custom = true)
+                        if (type != null)
+                            tmpProficiency.type = type
+                        if (visible != null)
+                            tmpProficiency.visible = visible
+                        Scenario.loadedResources.proficiencies[tmpProficiency.name] = tmpProficiency
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -617,7 +701,7 @@ object Abilities {
                             patchProficiency(scenario, name, type, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -804,6 +888,33 @@ object Abilities {
                 json.put("abilityScore", abilityScore)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpSkill = mSkill(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpSkill.description = description
+                        if (abilityScore != null)
+                            tmpSkill.abilityScore = abilityScore
+                        if (visible != null)
+                            tmpSkill.visible = visible
+                        Scenario.loadedResources.skills[tmpSkill.name] = tmpSkill
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -827,7 +938,7 @@ object Abilities {
                             patchSkill(scenario, name, description, abilityScore, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -1127,6 +1238,50 @@ object Abilities {
                 json.put("description", description)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpSpell = mSpell(
+                            name = name,
+                            magicSchool = magicSchool,
+                            custom = true)
+                        if (description != null)
+                            tmpSpell.description = description
+                        if (castingTime != null)
+                            tmpSpell.castingTime = castingTime
+                        if (concentration != null)
+                            tmpSpell.concentration = concentration
+                        if (components != null)
+                            tmpSpell.components = components
+                        if (duration != null)
+                            tmpSpell.duration = duration
+                        if (higherLevels != null)
+                            tmpSpell.higherLevels = higherLevels
+                        if (level != null)
+                            tmpSpell.level = level
+                        if (material != null)
+                            tmpSpell.material = material
+                        if (range != null)
+                            tmpSpell.range = range
+                        if (ritual != null)
+                            tmpSpell.ritual = ritual
+                        if (visible != null)
+                            tmpSpell.visible = visible
+                        Scenario.loadedResources.spells[tmpSpell.name] = tmpSpell
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -1182,7 +1337,7 @@ object Abilities {
                             )
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"
@@ -1358,6 +1513,31 @@ object Abilities {
                 json.put("description", description)
             if (visible != null)
                 json.put("visible", visible)
+            val client = HttpClient()
+            runBlocking {
+                val result = client.patch<HttpResponse>(endpoint){
+                    header("Authorization","Bearer "+User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
+                when (result.status.value) {
+                    200 -> {
+                        val tmpTrait = mTrait(
+                            name = name,
+                            custom = true)
+                        if (description != null)
+                            tmpTrait.description = description
+                        if (visible != null)
+                            tmpTrait.visible = visible
+                        Scenario.loadedResources.traits[tmpTrait.name] = tmpTrait
+                        success = true
+                    }
+                    else -> {
+                        Settings.error_message = result.readText()
+                    }
+                }
+                client.close()
+            }
+            /*To use when fixed
             runBlocking {
                 val (_, _, result) = endpoint.httpPatch().jsonBody(json.toString()).authentication().bearer(
                     User.UserToken.access_token
@@ -1379,7 +1559,7 @@ object Abilities {
                             patchTrait(scenario, name, description, visible)
                     }
                 }
-            }
+            }*/
             return success
         } else {
             Settings.error_message = "Player is not the GM of this scenario"

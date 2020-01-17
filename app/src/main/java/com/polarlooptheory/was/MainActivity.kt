@@ -1,13 +1,17 @@
 package com.polarlooptheory.was
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.FuelManager
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.Drawer
@@ -29,10 +33,17 @@ class MainActivity : AppCompatActivity(), NavigationHost, CoroutineScope by Main
     override fun navigateTo(fragment: Fragment, addToBackStack: Boolean) {
         val transaction = supportFragmentManager.beginTransaction().replace(R.id.main, fragment)
         if (addToBackStack) transaction.addToBackStack(null)
+        hideKeyboard()
         transaction.commit()
     }
     override fun getDrawer(): Drawer {
         return drwr
+    }
+    fun hideKeyboard(){
+        val im = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val focus = this.currentFocus
+        if(focus != null)
+            im.hideSoftInputFromWindow(focus.windowToken,0)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
