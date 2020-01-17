@@ -29,7 +29,7 @@ class NoteListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD NOTE"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(NoteEditFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(NoteEditFragment(false, null),false)
         }
         val list: MutableList<mNote> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
@@ -40,7 +40,7 @@ class NoteListFragment : Fragment() {
         linearLayoutManager = LinearLayoutManager(activity)
         view.char_list.layoutManager = linearLayoutManager
         adapter =
-            NoteListAdapter(list)
+            NoteListAdapter(list, parentFragment)
         view.char_list.adapter = adapter
 
         return view
