@@ -29,6 +29,10 @@ class NoteEditFragment(private val note: mNote?) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.note_edit, container, false)
+        if(note!=null){
+            view.editNoteName.setText(note.name)
+            view.editNoteContent.setText(note.content)
+        }
         view.buttonSave.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
                     val req = when(note){
