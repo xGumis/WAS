@@ -32,7 +32,7 @@ class CharacterListFragment() : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(null),false)
         }
         GlobalScope.launch(Dispatchers.Main) {
             val req = async{Scenario.getCharacters(Scenario.connectedScenario.scenario)}.await()

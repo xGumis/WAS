@@ -1545,4 +1545,7 @@ object Scenario {
         connectedScenario.clear()
         loadedResources.clear()
     }
+
+    var dummyCharacter : mCharacter? = null
+
 }

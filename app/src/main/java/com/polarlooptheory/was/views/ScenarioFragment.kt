@@ -55,6 +55,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     private var isUp = false
     private lateinit var chat: LinearLayout
     private lateinit var mainView: View
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -154,7 +155,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterBaseInfoFragment(), false)
+                        navigateTo(CharacterBaseInfoFragment(Scenario.dummyCharacter), false)
                         return false
                     }
                 }),
@@ -165,7 +166,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterBackgroundFragment(), false)
+                        navigateTo(CharacterBackgroundFragment(Scenario.dummyCharacter), false)
                         return false
                     }
                 }),
@@ -176,7 +177,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterStatsFragment(), false)
+                        navigateTo(CharacterStatsFragment(Scenario.dummyCharacter), false)
                         return false
                     }
                 }),
@@ -187,7 +188,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterHealthFragment(), false)
+                        navigateTo(CharacterHealthFragment(Scenario.dummyCharacter), false)
                         return false
                     }
                 }),
@@ -198,7 +199,18 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        navigateTo(CharacterProficiencyFragment(), false)
+                        navigateTo(CharacterProficiencyFragment(Scenario.dummyCharacter), false)
+                        return false
+                    }
+                }),
+            SecondaryDrawerItem().withIdentifier(666).withName("Magic").withOnDrawerItemClickListener(
+                object : Drawer.OnDrawerItemClickListener {
+                    override fun onItemClick(
+                        view: View?,
+                        position: Int,
+                        drawerItem: IDrawerItem<*>
+                    ): Boolean {
+                        navigateTo(CharacterMagicFragment(Scenario.dummyCharacter), false)
                         return false
                     }
                 })

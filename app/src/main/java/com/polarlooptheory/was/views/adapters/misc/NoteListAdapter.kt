@@ -19,7 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class NoteListAdapter() : RecyclerView.Adapter<NoteListAdapter.Holder>() {
+class NoteListAdapter : RecyclerView.Adapter<NoteListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.char_list_row, false)
