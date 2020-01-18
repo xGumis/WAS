@@ -37,7 +37,7 @@ class CustomProficienciesListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD PROFICIENCY"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomProficiencyFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomProficiencyFragment(null, true),false)
         }
         val list: MutableList<mProficiency> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

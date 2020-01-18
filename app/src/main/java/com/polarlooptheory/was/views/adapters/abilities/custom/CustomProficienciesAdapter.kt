@@ -8,12 +8,24 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mProficiency
 import com.polarlooptheory.was.views.adapters.abilities.character.CharacterProficienciesAdapter
 import com.polarlooptheory.was.views.adapters.app.inflate
+import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
+import com.polarlooptheory.was.views.custom.abilities.CustomProficiencyFragment
+import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class CustomProficienciesAdapter(private var proficiencyList: List<mProficiency>) : RecyclerView.Adapter<CustomProficienciesAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -29,7 +41,7 @@ class CustomProficienciesAdapter(private var proficiencyList: List<mProficiency>
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = proficiencyList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -56,9 +68,23 @@ class CustomProficienciesAdapter(private var proficiencyList: List<mProficiency>
             }
         }
 
-        fun bind(proficiency: mProficiency){
+        fun bind(proficiency: mProficiency, adapter: CustomProficienciesAdapter){
             this.proficiency = proficiency
             view.listItemName.text = proficiency.name
+            view.charEditButton.setOnClickListener {
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
+                    CustomProficiencyFragment(proficiency, false),true)
+            }
+            view.deleteItemButton6.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val req = async{ Abilities.deleteProficiency(Scenario.connectedScenario.scenario, proficiency.name)}.await()
+                    if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
+                }
+            }
         }
 
     }

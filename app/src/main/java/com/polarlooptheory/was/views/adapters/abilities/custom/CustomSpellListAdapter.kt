@@ -8,12 +8,24 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mSpell
 import com.polarlooptheory.was.views.adapters.abilities.character.SpellListAdapter
 import com.polarlooptheory.was.views.adapters.app.inflate
+import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
+import com.polarlooptheory.was.views.custom.magic.CustomSpellFragment
+import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_spell.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class CustomSpellListAdapter(private var spellList: List<mSpell>) : RecyclerView.Adapter<CustomSpellListAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -29,7 +41,7 @@ class CustomSpellListAdapter(private var spellList: List<mSpell>) : RecyclerView
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = spellList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -66,9 +78,23 @@ class CustomSpellListAdapter(private var spellList: List<mSpell>) : RecyclerView
             }
         }
 
-        fun bind(spell: mSpell){
+        fun bind(spell: mSpell, adapter: CustomSpellListAdapter){
             this.spell = spell
             view.listItemName.text = spell.name
+            view.charEditButton.setOnClickListener {
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
+                    CustomSpellFragment(spell, false),true)
+            }
+            view.deleteItemButton6.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val req = async{ Abilities.deleteSpell(Scenario.connectedScenario.scenario, spell.name)}.await()
+                    if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
+                }
+            }
         }
 
     }

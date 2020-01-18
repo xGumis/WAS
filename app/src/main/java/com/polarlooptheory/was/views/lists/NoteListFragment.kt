@@ -29,7 +29,7 @@ class NoteListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD NOTE"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(NoteEditFragment(null),true)
+            (parentFragment as NavigationHost).navigateTo(NoteEditFragment(null, true),true)
         }
         GlobalScope.launch(Dispatchers.Main) {
             val req = async{ Scenario.getNotes(Scenario.connectedScenario.scenario)}.await()

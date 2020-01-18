@@ -34,7 +34,7 @@ class CustomLanguageListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD LANGUAGE"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomLanguageFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomLanguageFragment(null, true),false)
         }
         val list: MutableList<mLanguage> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

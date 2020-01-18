@@ -37,7 +37,7 @@ class CustomMagicSchoolsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD MAGIC SCHOOL"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomMagicSchoolFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomMagicSchoolFragment(null, true),false)
         }
         val list: MutableList<mMagicSchool> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
