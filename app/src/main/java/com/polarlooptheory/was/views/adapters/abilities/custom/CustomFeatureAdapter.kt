@@ -15,7 +15,6 @@ import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mFeature
-import com.polarlooptheory.was.views.NoteEditFragment
 import com.polarlooptheory.was.views.adapters.app.inflate
 import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*

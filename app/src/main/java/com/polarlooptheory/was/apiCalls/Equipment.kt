@@ -67,7 +67,7 @@ object Equipment {
                             strMinimum = obj.getInt("strMinimum"),
                             weight = obj.getInt("weight"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.armors.containsKey(tmpArmor.name))
                             Scenario.loadedResources.armors[tmpArmor.name] = tmpArmor
@@ -397,7 +397,7 @@ object Equipment {
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.gear.containsKey(tmpGear.name))
                             Scenario.loadedResources.gear[tmpGear.name] = tmpGear
@@ -650,7 +650,7 @@ object Equipment {
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.tools.containsKey(tmpTool.name))
                             Scenario.loadedResources.tools[tmpTool.name] = tmpTool
@@ -917,7 +917,7 @@ object Equipment {
                             cost = obj.getString("cost"),
                             weight = obj.getInt("weight"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.vehicles.containsKey(tmpVehicle.name))
                             Scenario.loadedResources.vehicles[tmpVehicle.name] = tmpVehicle
@@ -1183,7 +1183,7 @@ object Equipment {
                             weaponRange = obj.getString("weaponRange"),
                             weight = obj.getInt("weight"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.weapons.containsKey(tmpWeapon.name))
                             Scenario.loadedResources.weapons[tmpWeapon.name] = tmpWeapon

@@ -38,7 +38,7 @@ class CustomVehicleListFragment : Fragment() {
                 async { Equipment.getVehicles(Scenario.connectedScenario.scenario) }.await()
             if(!req.isNullOrEmpty()){
                 req.forEach{
-                    if(it.custom) list.add(it)
+                    if(it.custom) {list.add(it);adapter.notifyDataSetChanged()}
                 }
             }
         }

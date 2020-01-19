@@ -16,12 +16,9 @@ import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mTool
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.adapters.eq.character.ToolListAdapter
-import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
 import com.polarlooptheory.was.views.custom.eq.CustomToolFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_tool.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -72,7 +69,7 @@ class CustomToolListAdapter(private var toolList: List<mTool>) : RecyclerView.Ad
 
         fun bind(tool: mTool, adapter: CustomToolListAdapter){
             this.tool = tool
-            view.listItemName.text = tool.name
+            view.charName.text = tool.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomToolFragment(tool, false),true)

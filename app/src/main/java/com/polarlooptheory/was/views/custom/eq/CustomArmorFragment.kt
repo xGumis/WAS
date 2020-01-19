@@ -1,32 +1,20 @@
 package com.polarlooptheory.was.views.custom.eq
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.text.isDigitsOnly
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.Settings
-import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mArmor
-import com.polarlooptheory.was.views.lists.custom.abilities.CustomProficienciesListFragment
 import com.polarlooptheory.was.views.lists.custom.equipment.CustomArmorsListFragment
-import kotlinx.android.synthetic.main.char_base_info.view.*
 import kotlinx.android.synthetic.main.custom_armor.view.*
-import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.*
-import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.buttonSubmit
-import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.customName
-import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.switchVisible
-import kotlinx.android.synthetic.main.custom_prof.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -72,7 +60,7 @@ class CustomArmorFragment(private val armor: mArmor?, private val isNew: Boolean
                                 view.customStealthDisadvantage.isChecked,
                                 view.customMinStr.text.toString().toIntOrNull(),
                                 view.customWeight.text.toString().toIntOrNull(),
-                                view.switchVisible.isChecked
+                                view.customVisible.isChecked
                             )
                         }.await()
                         else -> async {
@@ -86,7 +74,7 @@ class CustomArmorFragment(private val armor: mArmor?, private val isNew: Boolean
                                 view.customStealthDisadvantage.isChecked,
                                 view.customMinStr.text.toString().toIntOrNull(),
                                 view.customWeight.text.toString().toIntOrNull(),
-                                view.switchVisible.isChecked
+                                view.customVisible.isChecked
                             )
                         }.await()
                     }

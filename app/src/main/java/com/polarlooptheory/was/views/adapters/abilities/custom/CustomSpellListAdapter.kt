@@ -15,13 +15,10 @@ import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mSpell
-import com.polarlooptheory.was.views.adapters.abilities.character.SpellListAdapter
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import com.polarlooptheory.was.views.custom.magic.CustomSpellFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_spell.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -80,7 +77,7 @@ class CustomSpellListAdapter(private var spellList: List<mSpell>) : RecyclerView
 
         fun bind(spell: mSpell, adapter: CustomSpellListAdapter){
             this.spell = spell
-            view.listItemName.text = spell.name
+            view.charName.text = spell.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomSpellFragment(spell, false),true)

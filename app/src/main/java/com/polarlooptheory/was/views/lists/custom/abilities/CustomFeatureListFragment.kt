@@ -37,7 +37,7 @@ class CustomFeatureListFragment : Fragment() {
                 async { Abilities.getFeatures(Scenario.connectedScenario.scenario)}.await()
             if(!req.isNullOrEmpty()){
                 req.forEach{
-                    if(it.custom) list.add(it)
+                    if(it.custom) {list.add(it);adapter.notifyDataSetChanged()}
                 }
             }
         }

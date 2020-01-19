@@ -16,17 +16,13 @@ import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mLanguage
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import com.polarlooptheory.was.views.custom.abilities.CustomLanguageFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
-import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.description_abilities_language.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.android.synthetic.main.description_abilities_language.view.detailsName as detailsName1
 
 class CustomLanguagesAdapter(private var languageList: List<mLanguage>) : RecyclerView.Adapter<CustomLanguagesAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -72,7 +68,7 @@ class CustomLanguagesAdapter(private var languageList: List<mLanguage>) : Recycl
 
         fun bind(language: mLanguage, adapter: CustomLanguagesAdapter){
             this.language = language
-            view.listItemName.text = language.name
+            view.charName.text = language.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomLanguageFragment(language, false),true)

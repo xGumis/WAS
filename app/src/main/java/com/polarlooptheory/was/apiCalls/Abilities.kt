@@ -58,7 +58,7 @@ object Abilities {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.features.containsKey(tmpFeature.name))
                             Scenario.loadedResources.features[tmpFeature.name] = tmpFeature
@@ -281,7 +281,7 @@ object Abilities {
                             script = obj.getString("script"),
                             type = obj.getString("type"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.languages.containsKey(tmpLanguage.name))
                             Scenario.loadedResources.languages[tmpLanguage.name] = tmpLanguage
@@ -517,7 +517,7 @@ object Abilities {
                             name = obj.getString("name"),
                             type = obj.getString("type"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.proficiencies.containsKey(tmpProficiency.name))
                             Scenario.loadedResources.proficiencies[tmpProficiency.name] = tmpProficiency
@@ -740,7 +740,7 @@ object Abilities {
                             description = obj.getString("description"),
                             abilityScore = obj.getString("abilityScore"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.skills.containsKey(tmpSkill.name))
                             Scenario.loadedResources.skills[tmpSkill.name] = tmpSkill
@@ -986,7 +986,7 @@ object Abilities {
                             material = obj.getString("material"),
                             range = obj.getString("range"),
                             ritual = obj.getBoolean("ritual"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.spells.containsKey(tmpSpell.name))
                             Scenario.loadedResources.spells[tmpSpell.name] = tmpSpell
@@ -1375,7 +1375,7 @@ object Abilities {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.traits.containsKey(tmpTrait.name))
                             Scenario.loadedResources.traits[tmpTrait.name] = tmpTrait

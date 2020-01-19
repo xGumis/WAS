@@ -1,7 +1,5 @@
 package com.polarlooptheory.was.views.lists.custom.equipment
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,16 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.polarlooptheory.was.NavigationHost
-
 import com.polarlooptheory.was.R
-import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
-import com.polarlooptheory.was.model.abilities.mLanguage
 import com.polarlooptheory.was.model.equipment.mArmor
-import com.polarlooptheory.was.views.adapters.abilities.custom.CustomLanguagesAdapter
 import com.polarlooptheory.was.views.adapters.eq.custom.CustomArmorListAdapter
-import com.polarlooptheory.was.views.custom.abilities.CustomLanguageFragment
 import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
 import kotlinx.android.synthetic.main.characters.view.*
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +38,7 @@ class CustomArmorsListFragment : Fragment() {
                 async { Equipment.getArmors(Scenario.connectedScenario.scenario) }.await()
             if(!req.isNullOrEmpty()){
                 req.forEach{
-                    if(it.custom) list.add(it)
+                    if(it.custom) {list.add(it);adapter.notifyDataSetChanged()}
                 }
             }        }
         linearLayoutManager = LinearLayoutManager(activity)

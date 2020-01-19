@@ -42,7 +42,7 @@ class CustomLanguageListFragment : Fragment() {
                 async { Abilities.getLanguages(Scenario.connectedScenario.scenario) }.await()
             if(!req.isNullOrEmpty()){
                 req.forEach{
-                    if(it.custom) list.add(it)
+                    if(it.custom) {list.add(it);adapter.notifyDataSetChanged()}
                 }
             }        }
         linearLayoutManager = LinearLayoutManager(activity)

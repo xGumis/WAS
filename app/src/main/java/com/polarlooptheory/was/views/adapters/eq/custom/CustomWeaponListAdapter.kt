@@ -16,12 +16,9 @@ import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mWeapon
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.adapters.eq.character.WeaponListAdapter
-import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
 import com.polarlooptheory.was.views.custom.eq.CustomWeaponFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_weapon.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -76,7 +73,7 @@ class CustomWeaponListAdapter(private var weaponList: List<mWeapon>) : RecyclerV
 
         fun bind(weapon: mWeapon,adapter: CustomWeaponListAdapter){
             this.weapon = weapon
-            view.listItemName.text = weapon.name
+            view.charName.text = weapon.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomWeaponFragment(weapon, false),true)

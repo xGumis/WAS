@@ -16,12 +16,9 @@ import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mGear
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.adapters.eq.character.GearListAdapter
-import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
 import com.polarlooptheory.was.views.custom.eq.CustomGearFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_vehicle_gear.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -71,7 +68,7 @@ class CustomGearListAdapter(private var gearList: List<mGear>) : RecyclerView.Ad
 
         fun bind(gear: mGear, adapter: CustomGearListAdapter){
             this.gear = gear
-            view.listItemName.text = gear.name
+            view.charName.text = gear.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomGearFragment(gear, false),true)

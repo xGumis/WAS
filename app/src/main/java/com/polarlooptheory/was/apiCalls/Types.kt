@@ -62,7 +62,7 @@ object Types {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.conditions.containsKey(tmpCondition.name))
                             Scenario.loadedResources.conditions[tmpCondition.name] = tmpCondition
@@ -284,7 +284,7 @@ object Types {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.damageTypes.containsKey(tmpDamageType.name))
                             Scenario.loadedResources.damageTypes[tmpDamageType.name] = tmpDamageType
@@ -506,7 +506,7 @@ object Types {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.magicSchools.containsKey(tmpMagicSchool.name))
                             Scenario.loadedResources.magicSchools[tmpMagicSchool.name] = tmpMagicSchool
@@ -731,7 +731,7 @@ object Types {
                             name = obj.getString("name"),
                             description = obj.getString("description"),
                             visible = obj.getBoolean("visible"),
-                            custom = !obj.getString("scenarioKey").isNullOrEmpty()
+                            custom = !obj.getString("scenarioKey").equals("null")
                         )
                         if(!Scenario.loadedResources.weaponProperties.containsKey(tmpWeaponProperty.name))
                             Scenario.loadedResources.weaponProperties[tmpWeaponProperty.name] = tmpWeaponProperty

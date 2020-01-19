@@ -16,7 +16,6 @@ import com.polarlooptheory.was.apiCalls.Equipment
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mVehicle
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
 import com.polarlooptheory.was.views.custom.eq.CustomVehicleFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_vehicle_gear.view.*

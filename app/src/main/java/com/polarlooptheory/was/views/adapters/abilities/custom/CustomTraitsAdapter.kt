@@ -15,13 +15,10 @@ import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mTrait
-import com.polarlooptheory.was.views.adapters.abilities.character.CharacterTraitsAdapter
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import com.polarlooptheory.was.views.custom.abilities.CustomTraitFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -70,7 +67,7 @@ class CustomTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView.Ad
 
         fun bind(trait: mTrait, adapter: CustomTraitsAdapter){
             this.trait = trait
-            view.listItemName.text = trait.name
+            view.charName.text = trait.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomTraitFragment(trait, false),true)

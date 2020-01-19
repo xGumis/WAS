@@ -15,13 +15,10 @@ import com.polarlooptheory.was.Settings
 import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mProficiency
-import com.polarlooptheory.was.views.adapters.abilities.character.CharacterProficienciesAdapter
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import com.polarlooptheory.was.views.custom.abilities.CustomProficiencyFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -70,7 +67,7 @@ class CustomProficienciesAdapter(private var proficiencyList: List<mProficiency>
 
         fun bind(proficiency: mProficiency, adapter: CustomProficienciesAdapter){
             this.proficiency = proficiency
-            view.listItemName.text = proficiency.name
+            view.charName.text = proficiency.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomProficiencyFragment(proficiency, false),true)

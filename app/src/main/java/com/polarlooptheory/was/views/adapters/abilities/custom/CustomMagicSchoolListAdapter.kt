@@ -12,18 +12,13 @@ import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
 import com.polarlooptheory.was.Settings
-import com.polarlooptheory.was.apiCalls.Abilities
 import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.apiCalls.Types
-import com.polarlooptheory.was.model.abilities.mProficiency
-import com.polarlooptheory.was.model.abilities.mSpell
 import com.polarlooptheory.was.model.types.mMagicSchool
 import com.polarlooptheory.was.views.adapters.app.inflate
-import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import com.polarlooptheory.was.views.custom.magic.CustomMagicSchoolFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -72,7 +67,7 @@ class CustomMagicSchoolListAdapter(private var magicShoolList: List<mMagicSchool
 
         fun bind(magicSchool: mMagicSchool, adapter: CustomMagicSchoolListAdapter){
             this.magicSchool = magicSchool
-            view.listItemName.text = magicSchool.name
+            view.charName.text = magicSchool.name
             view.charEditButton.setOnClickListener {
                 ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
                     CustomMagicSchoolFragment(magicSchool, false),true)
