@@ -52,7 +52,7 @@ class NoteListAdapter : RecyclerView.Adapter<NoteListAdapter.Holder>() {
             this.note = note
             view.charName.text = note.name
             view.charEditButton.setOnClickListener {
-                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(NoteEditFragment(note),true)
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(NoteEditFragment(note, false),true)
             }
             view.deleteItemButton6.setOnClickListener {
                 GlobalScope.launch(Dispatchers.Main) {

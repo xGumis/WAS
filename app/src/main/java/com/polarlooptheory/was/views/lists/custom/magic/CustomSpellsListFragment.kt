@@ -36,7 +36,7 @@ class CustomSpellsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD SPELL"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomSpellFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomSpellFragment(null, true),false)
         }
         val list: MutableList<mSpell> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
@@ -46,7 +46,8 @@ class CustomSpellsListFragment : Fragment() {
                 req.forEach{
                     if(it.custom) list.add(it)
                 }
-            }        }
+            }
+        }
 
         linearLayoutManager = LinearLayoutManager(activity)
         view.char_list.layoutManager = linearLayoutManager

@@ -35,7 +35,7 @@ class CustomTraitsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD TRAIT"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomTraitFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomTraitFragment(null, true),false)
         }
         val list: MutableList<mTrait> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

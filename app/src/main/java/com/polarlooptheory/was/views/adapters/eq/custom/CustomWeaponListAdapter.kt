@@ -8,12 +8,24 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Equipment
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mWeapon
 import com.polarlooptheory.was.views.adapters.app.inflate
 import com.polarlooptheory.was.views.adapters.eq.character.WeaponListAdapter
+import com.polarlooptheory.was.views.custom.eq.CustomArmorFragment
+import com.polarlooptheory.was.views.custom.eq.CustomWeaponFragment
+import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_weapon.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class CustomWeaponListAdapter(private var weaponList: List<mWeapon>) : RecyclerView.Adapter<CustomWeaponListAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -29,7 +41,7 @@ class CustomWeaponListAdapter(private var weaponList: List<mWeapon>) : RecyclerV
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = weaponList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -62,9 +74,23 @@ class CustomWeaponListAdapter(private var weaponList: List<mWeapon>) : RecyclerV
             }
         }
 
-        fun bind(weapon: mWeapon){
+        fun bind(weapon: mWeapon,adapter: CustomWeaponListAdapter){
             this.weapon = weapon
             view.listItemName.text = weapon.name
+            view.charEditButton.setOnClickListener {
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
+                    CustomWeaponFragment(weapon, false),true)
+            }
+            view.deleteItemButton6.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val req = async{ Equipment.deleteWeapon(Scenario.connectedScenario.scenario, weapon.name)}.await()
+                    if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
+                }
+            }
         }
 
     }

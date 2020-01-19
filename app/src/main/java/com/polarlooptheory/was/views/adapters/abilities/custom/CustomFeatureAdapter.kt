@@ -8,11 +8,22 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mFeature
+import com.polarlooptheory.was.views.NoteEditFragment
 import com.polarlooptheory.was.views.adapters.app.inflate
+import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
 import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class CustomFeatureAdapter (private var featureList: List<mFeature>) : RecyclerView.Adapter<CustomFeatureAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -28,7 +39,7 @@ class CustomFeatureAdapter (private var featureList: List<mFeature>) : RecyclerV
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = featureList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -55,9 +66,23 @@ class CustomFeatureAdapter (private var featureList: List<mFeature>) : RecyclerV
             }
         }
 
-        fun bind(feature: mFeature){
+        fun bind(feature: mFeature, adapter: CustomFeatureAdapter){
             this.feature = feature
             view.charName.text = feature.name
+            view.charEditButton.setOnClickListener {
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
+                    CustomFeatureFragment(feature, false),true)
+            }
+            view.deleteItemButton6.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val req = async{ Abilities.deleteFeature(Scenario.connectedScenario.scenario, feature.name)}.await()
+                    if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
+                }
+            }
         }
 
     }

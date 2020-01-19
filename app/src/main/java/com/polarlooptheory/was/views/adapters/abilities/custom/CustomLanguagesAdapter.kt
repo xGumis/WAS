@@ -8,12 +8,24 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
+import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mLanguage
 import com.polarlooptheory.was.views.adapters.app.inflate
+import com.polarlooptheory.was.views.custom.abilities.CustomFeatureFragment
+import com.polarlooptheory.was.views.custom.abilities.CustomLanguageFragment
+import kotlinx.android.synthetic.main.char_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.description_abilities_language.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.android.synthetic.main.description_abilities_language.view.detailsName as detailsName1
 
 class CustomLanguagesAdapter(private var languageList: List<mLanguage>) : RecyclerView.Adapter<CustomLanguagesAdapter.Holder>() {
@@ -30,7 +42,7 @@ class CustomLanguagesAdapter(private var languageList: List<mLanguage>) : Recycl
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = languageList[position]
-        holder.bind(item)
+        holder.bind(item, this)
     }
 
 
@@ -58,9 +70,23 @@ class CustomLanguagesAdapter(private var languageList: List<mLanguage>) : Recycl
             }
         }
 
-        fun bind(language: mLanguage){
+        fun bind(language: mLanguage, adapter: CustomLanguagesAdapter){
             this.language = language
             view.listItemName.text = language.name
+            view.charEditButton.setOnClickListener {
+                ((view.context as MainActivity).supportFragmentManager.fragments.firstOrNull() as NavigationHost).navigateTo(
+                    CustomLanguageFragment(language, false),true)
+            }
+            view.deleteItemButton6.setOnClickListener {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val req = async{ Abilities.deleteLanguage(Scenario.connectedScenario.scenario, language.name)}.await()
+                    if(req) adapter.notifyDataSetChanged()
+                    else {
+                        (view.context as MainActivity).makeToast(Settings.error_message)
+                        Settings.error_message = ""
+                    }
+                }
+            }
         }
 
     }

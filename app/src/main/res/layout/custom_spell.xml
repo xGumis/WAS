@@ -60,9 +60,10 @@
             android:id="@+id/customMagicSchool"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:editable="false"
             android:ems="10"
-            android:hint="Magic School"
-            android:inputType="textPersonName" />
+            android:hint="Magic School" />
 
         <Space
             android:layout_width="match_parent"
@@ -168,9 +169,10 @@
             android:id="@+id/customHigherLvL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
             android:ems="10"
             android:hint="Higher Levels"
-            android:inputType="textPersonName" />
+            android:inputType="textMultiLine" />
 
         <Space
             android:layout_width="match_parent"
