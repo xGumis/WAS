@@ -63,20 +63,20 @@ class CustomSpellFragment(private val spell: mSpell?, private val isNew: Boolean
                     req.forEach{
                         list.add(it.name)
                     }
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle("Choose a magic school")
+                    builder.setSingleChoiceItems(list.toTypedArray(), -1){
+                            dialog: DialogInterface?, i: Int ->
+                        view.customMagicSchool.setText(list[i])
+                        dialog?.dismiss()
+                    }
+                    builder.setNeutralButton("Cancel"){
+                            dialog, _ -> dialog.cancel()
+                    }
+                    val dialog = builder.create()
+                    dialog.show()
                 }
             }
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Choose a magic school")
-            builder.setSingleChoiceItems(list.toTypedArray(), -1){
-                dialog: DialogInterface?, i: Int ->
-                view.customMagicSchool.setText(list[i])
-                dialog?.dismiss()
-            }
-            builder.setNeutralButton("Cancel"){
-                dialog, _ -> dialog.cancel()
-            }
-            val dialog = builder.create()
-            dialog.show()
         }
         view.buttonSubmit.setOnClickListener {
             if (!view.customName.text.isNullOrEmpty()){

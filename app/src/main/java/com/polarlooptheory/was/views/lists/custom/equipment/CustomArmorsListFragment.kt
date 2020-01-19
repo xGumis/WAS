@@ -37,7 +37,7 @@ class CustomArmorsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD ARMOR"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomArmorFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomArmorFragment(null,true),false)
         }
         val list: MutableList<mArmor> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

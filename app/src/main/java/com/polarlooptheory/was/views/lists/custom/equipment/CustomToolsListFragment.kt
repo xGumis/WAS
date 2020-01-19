@@ -36,7 +36,7 @@ class CustomToolsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD TOOL"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomToolFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomToolFragment(null,true),false)
         }
         val list: MutableList<mTool> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

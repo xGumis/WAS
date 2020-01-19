@@ -30,7 +30,7 @@ class CustomVehicleListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD VEHICLE"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomVehicleFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomVehicleFragment(null,true),false)
         }
         val list: MutableList<mVehicle> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {

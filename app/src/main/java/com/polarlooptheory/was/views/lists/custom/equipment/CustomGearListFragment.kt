@@ -36,7 +36,7 @@ class CustomGearListFragment : Fragment() {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.text = "ADD GEAR"
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CustomGearFragment(),false)
+            (parentFragment as NavigationHost).navigateTo(CustomGearFragment(null,true),false)
         }
         val list: MutableList<mGear> = mutableListOf()
         GlobalScope.launch(Dispatchers.Main) {
