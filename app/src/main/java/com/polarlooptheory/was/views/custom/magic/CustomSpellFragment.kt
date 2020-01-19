@@ -41,7 +41,7 @@ class CustomSpellFragment(private val spell: mSpell?, private val isNew: Boolean
         if(spell!=null){
             view.customName.setText(spell.name)
             if (!isNew) {view.customName.inputType = InputType.TYPE_NULL; view.customName.isFocusable = false}
-            view.customLevel.setText(spell.level)
+            view.customLevel.setText(spell.level.toString())
             view.customMagicSchool.setText(spell.magicSchool)
             view.customRange.setText(spell.range)
             view.customDuration.setText(spell.duration)
@@ -93,7 +93,7 @@ class CustomSpellFragment(private val spell: mSpell?, private val isNew: Boolean
                                 view.customConcetration.isChecked,
                                 view.customDuration.text.toString(),
                                 view.customHigherLvL.text.toString(),
-                                view.customLevel.text.toString().toInt(),
+                                view.customLevel.text.toString().toIntOrNull(),
                                 view.customMaterial.text.toString(),
                                 view.customRange.text.toString(),
                                 view.customRitual.isChecked,
@@ -111,7 +111,7 @@ class CustomSpellFragment(private val spell: mSpell?, private val isNew: Boolean
                                 view.customConcetration.isChecked,
                                 view.customDuration.text.toString(),
                                 view.customHigherLvL.text.toString(),
-                                view.customLevel.text.toString().toInt(),
+                                view.customLevel.text.toString().toIntOrNull(),
                                 view.customMaterial.text.toString(),
                                 view.customRange.text.toString(),
                                 view.customRitual.isChecked,

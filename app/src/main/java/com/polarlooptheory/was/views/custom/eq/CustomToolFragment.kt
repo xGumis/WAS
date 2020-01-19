@@ -49,7 +49,7 @@ class CustomToolFragment(private val tool: mTool?, private val isNew: Boolean) :
             if (!isNew) {view.customName1.inputType = InputType.TYPE_NULL; view.customName1.isFocusable = false}
             view.customCategory.setText(tool.category)
             view.customCost.setText(tool.cost)
-            view.customWeight.setText(tool.weight)
+            view.customWeight.setText(tool.weight.toString())
             view.customDescription.setText(tool.description)
             view.customVisible.isChecked = tool.custom
         }
@@ -64,7 +64,7 @@ class CustomToolFragment(private val tool: mTool?, private val isNew: Boolean) :
                                 view.customDescription.text.toString(),
                                 view.customCategory.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
@@ -75,7 +75,7 @@ class CustomToolFragment(private val tool: mTool?, private val isNew: Boolean) :
                                 view.customDescription.text.toString(),
                                 view.customCategory.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()

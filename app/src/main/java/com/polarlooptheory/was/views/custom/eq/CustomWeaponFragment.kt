@@ -51,14 +51,14 @@ class CustomWeaponFragment(private val weapon: mWeapon?, private val isNew: Bool
             view.customCategory.setText(weapon.category)
             view.customDmgType.setText(weapon.damageType)
             view.customDmgDice.setText(weapon.damageDice)
-            view.customDmgBonus.setText(weapon.damageBonus)
+            view.customDmgBonus.setText(weapon.damageBonus.toString())
             view.customCost.setText(weapon.cost)
             view.customWeaponReach.setText(weapon.weaponRange)
-            view.customNormalRange.setText(weapon.normalRange)
-            view.customLongRange.setText(weapon.longRange)
-            view.customNormalThrowingRange.setText(weapon.normalThrowRange)
-            view.customLongThrowingRange.setText(weapon.longThrowRange)
-            view.customWeight.setText(weapon.weight)
+            view.customNormalRange.setText(weapon.normalRange.toString())
+            view.customLongRange.setText(weapon.longRange.toString())
+            view.customNormalThrowingRange.setText(weapon.normalThrowRange.toString())
+            view.customLongThrowingRange.setText(weapon.longThrowRange.toString())
+            view.customWeight.setText(weapon.weight.toString())
             view.customVisible.isChecked = weapon.custom
         }
         view.customDmgType.setOnClickListener {
@@ -98,15 +98,15 @@ class CustomWeaponFragment(private val weapon: mWeapon?, private val isNew: Bool
                                 view.customDmgType.text.toString(),
                                 view.customCategory.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customDmgBonus.text.toString().toInt(),
+                                view.customDmgBonus.text.toString().toIntOrNull(),
                                 view.customDmgDice.text.toString(),
-                                view.customLongRange.text.toString().toInt(),
-                                view.customLongThrowingRange.text.toString().toInt(),
-                                view.customNormalRange.text.toString().toInt(),
-                                view.customNormalThrowingRange.text.toString().toInt(),
+                                view.customLongRange.text.toString().toIntOrNull(),
+                                view.customLongThrowingRange.text.toString().toIntOrNull(),
+                                view.customNormalRange.text.toString().toIntOrNull(),
+                                view.customNormalThrowingRange.text.toString().toIntOrNull(),
                                 null,
                                 view.customWeaponReach.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
@@ -117,15 +117,15 @@ class CustomWeaponFragment(private val weapon: mWeapon?, private val isNew: Bool
                                 view.customDmgType.text.toString(),
                                 view.customCategory.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customDmgBonus.text.toString().toInt(),
+                                view.customDmgBonus.text.toString().toIntOrNull(),
                                 view.customDmgDice.text.toString(),
-                                view.customLongRange.text.toString().toInt(),
-                                view.customLongThrowingRange.text.toString().toInt(),
-                                view.customNormalRange.text.toString().toInt(),
-                                view.customNormalThrowingRange.text.toString().toInt(),
+                                view.customLongRange.text.toString().toIntOrNull(),
+                                view.customLongThrowingRange.text.toString().toIntOrNull(),
+                                view.customNormalRange.text.toString().toIntOrNull(),
+                                view.customNormalThrowingRange.text.toString().toIntOrNull(),
                                 null,
                                 view.customWeaponReach.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()

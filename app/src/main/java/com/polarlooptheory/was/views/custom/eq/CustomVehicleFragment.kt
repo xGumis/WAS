@@ -45,7 +45,7 @@ class CustomVehicleFragment(private val vehicle: mVehicle?, private val isNew: B
             view.customName.setText(vehicle.name)
             if (!isNew) {view.customName.inputType = InputType.TYPE_NULL; view.customName.isFocusable = false}
             view.customCost.setText(vehicle.cost)
-            view.customWeight.setText(vehicle.weight)
+            view.customWeight.setText(vehicle.weight.toString())
             view.customDescription.setText(vehicle.description)
             view.customVisible.isChecked = vehicle.custom
         }
@@ -59,7 +59,7 @@ class CustomVehicleFragment(private val vehicle: mVehicle?, private val isNew: B
                                 view.customName.text.toString(),
                                 view.customDescription.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
@@ -69,7 +69,7 @@ class CustomVehicleFragment(private val vehicle: mVehicle?, private val isNew: B
                                 view.customName.text.toString(),
                                 view.customDescription.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()

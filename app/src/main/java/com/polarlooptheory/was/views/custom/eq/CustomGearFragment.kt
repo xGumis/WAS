@@ -43,7 +43,7 @@ class CustomGearFragment(private val gear: mGear?, private val isNew: Boolean) :
             view.customName1.setText(gear.name)
             if (!isNew) {view.customName1.inputType = InputType.TYPE_NULL; view.customName1.isFocusable = false}
             view.customCost.setText(gear.cost)
-            view.customWeight.setText(gear.weight)
+            view.customWeight.setText(gear.weight.toString())
             view.customDescription.setText(gear.description)
             view.customVisible.isChecked = gear.custom
         }
@@ -57,7 +57,7 @@ class CustomGearFragment(private val gear: mGear?, private val isNew: Boolean) :
                                 view.customName1.text.toString(),
                                 view.customDescription.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
@@ -67,7 +67,7 @@ class CustomGearFragment(private val gear: mGear?, private val isNew: Boolean) :
                                 view.customName1.text.toString(),
                                 view.customDescription.text.toString(),
                                 view.customCost.text.toString(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()

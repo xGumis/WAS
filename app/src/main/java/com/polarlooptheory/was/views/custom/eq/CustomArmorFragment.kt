@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.text.isDigitsOnly
 import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.NavigationHost
 import com.polarlooptheory.was.R
@@ -19,6 +20,7 @@ import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.equipment.mArmor
 import com.polarlooptheory.was.views.lists.custom.abilities.CustomProficienciesListFragment
 import com.polarlooptheory.was.views.lists.custom.equipment.CustomArmorsListFragment
+import kotlinx.android.synthetic.main.char_base_info.view.*
 import kotlinx.android.synthetic.main.custom_armor.view.*
 import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.*
 import kotlinx.android.synthetic.main.custom_feat_trait_magicschool.view.buttonSubmit
@@ -43,11 +45,11 @@ class CustomArmorFragment(private val armor: mArmor?, private val isNew: Boolean
             if (!isNew) {view.customName1.inputType = InputType.TYPE_NULL; view.customName1.isFocusable = false}
             view.customAC.setText(armor.armorClass.toString())
             view.customDexBonus.isChecked = armor.armorClass.dexBonus
-            if(view.customDexBonus.isChecked) {view.customMaxDexBonus.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL; view.customMaxDexBonus.isFocusable = true; view.customMaxDexBonus.setText(armor.armorClass.maxBonus)}
+            if(view.customDexBonus.isChecked) {view.customMaxDexBonus.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL; view.customMaxDexBonus.isFocusable = true; view.customMaxDexBonus.setText(armor.armorClass.maxBonus.toString())}
             else {view.customDexBonus.inputType = InputType.TYPE_NULL; view.customMaxDexBonus.isFocusable = false; view.customMaxDexBonus.setText("0")}
             view.customCost.setText(armor.cost)
-            view.customMinStr.setText(armor.strMinimum)
-            view.customWeight.setText(armor.weight)
+            view.customMinStr.setText(armor.strMinimum.toString())
+            view.customWeight.setText(armor.weight.toString())
             view.customStealthDisadvantage.isChecked = armor.stealthDisadvantage
             view.customVisible.isChecked = armor.custom
         }
@@ -63,13 +65,13 @@ class CustomArmorFragment(private val armor: mArmor?, private val isNew: Boolean
                             Equipment.createArmor(
                                 Scenario.connectedScenario.scenario,
                                 view.customName1.text.toString(),
-                                view.customAC.text.toString().toInt(),
+                                view.customAC.text.toString().toIntOrNull(),
                                 view.customDexBonus.isChecked,
-                                view.customMaxDexBonus.text.toString().toInt(),
+                                view.customMaxDexBonus.text.toString().toIntOrNull(),
                                 view.customCost.text.toString(),
                                 view.customStealthDisadvantage.isChecked,
-                                view.customMinStr.text.toString().toInt(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customMinStr.text.toString().toIntOrNull(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
@@ -77,13 +79,13 @@ class CustomArmorFragment(private val armor: mArmor?, private val isNew: Boolean
                             Equipment.patchArmor(
                                 Scenario.connectedScenario.scenario,
                                 view.customName1.text.toString(),
-                                view.customAC.text.toString().toInt(),
+                                view.customAC.text.toString().toIntOrNull(),
                                 view.customDexBonus.isChecked,
-                                view.customMaxDexBonus.text.toString().toInt(),
+                                view.customMaxDexBonus.text.toString().toIntOrNull(),
                                 view.customCost.text.toString(),
                                 view.customStealthDisadvantage.isChecked,
-                                view.customMinStr.text.toString().toInt(),
-                                view.customWeight.text.toString().toInt(),
+                                view.customMinStr.text.toString().toIntOrNull(),
+                                view.customWeight.text.toString().toIntOrNull(),
                                 view.switchVisible.isChecked
                             )
                         }.await()
