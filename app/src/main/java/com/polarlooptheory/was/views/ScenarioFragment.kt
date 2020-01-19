@@ -44,6 +44,7 @@ import com.polarlooptheory.was.views.lists.custom.magic.CustomMagicSchoolsListFr
 import com.polarlooptheory.was.views.lists.custom.magic.CustomSpellsListFragment
 import com.polarlooptheory.was.views.start.StartScreenFragment
 import kotlinx.android.synthetic.main.password_change.*
+import kotlinx.android.synthetic.main.password_change.view.*
 import kotlinx.android.synthetic.main.scenario.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -155,8 +156,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterBaseInfoFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterBaseInfoFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -168,8 +171,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterBackgroundFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterBackgroundFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -181,8 +186,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterStatsFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterStatsFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -194,8 +201,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterHealthFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterHealthFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -207,8 +216,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterProficiencyFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterProficiencyFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -220,8 +231,10 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         position: Int,
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
-                        if(Scenario.connectedScenario.chosenCharacter!=null)
-                            navigateTo(CharacterMagicFragment(Scenario.connectedScenario.chosenCharacter,false), false)
+                        if(Scenario.connectedScenario.chosenCharacter!=null){
+                            Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
+                            navigateTo(CharacterMagicFragment(false), false)
+                        }
                         else (activity as MainActivity).makeToast("Character is not chosen")
                         return false
                     }
@@ -344,7 +357,7 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                 })
 
         )
-        val magic = PrimaryDrawerItem().withIdentifier(20).withName("Magic")
+        val magic = PrimaryDrawerItem().withIdentifier(20).withName("Spells")
             .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
                 override fun onItemClick(
                     view: View?,
@@ -503,15 +516,19 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
                         drawerItem: IDrawerItem<*>
                     ): Boolean {
                         val alert = AlertDialog.Builder(activity)
-                        alert.setTitle("Scenario code")
-                        alert.setView(View(activity).findViewById<LinearLayout>(R.id.passwordChange))
+                        alert.setTitle("Change password")
+                        val v = LayoutInflater.from(context).inflate(R.layout.password_change,null)
+                        alert.setView(v)
                         alert.setPositiveButton("OK") { _, _ ->
-                            if (editPassword1.text.toString() == editPassword2.text.toString()) {
+                            val pass = v.editPassword1.text
+                            val cpass = v.editPassword2.text
+                            if (pass.toString() == cpass.toString()) {
+                                val password = pass?.toString() ?: ""
                                 GlobalScope.launch(Dispatchers.Main) {
                                     val req = async {
                                         Scenario.GM.changeScenarioPassword(
                                             Scenario.connectedScenario.scenario,
-                                            editPassword1.text.toString()
+                                            password
                                         )
                                     }.await()
                                     if (!req) {
@@ -672,6 +689,15 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
     }
 
     override fun OnReloadPlayers(scenario: mScenario) {
+        GlobalScope.launch(Dispatchers.Main) {
+            val req = async{Scenario.getPlayers(Scenario.connectedScenario.scenario)}.await()
+            if(req){
+                if(childFragmentManager.fragments.first() is PlayerListFragment){
+                    (childFragmentManager.fragments.first() as PlayerListFragment).adapter.notifyDataSetChanged()
+                }
+                chatRecyclerView.adapter?.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun OnReloadCharacters(scenario: mScenario) {
@@ -685,10 +711,15 @@ class ScenarioFragment : Fragment(), NavigationHost, Scenario.ISocketListener {
         else{
             Scenario.connectedScenario.chosenCharacter = Scenario.connectedScenario.charactersList.values.firstOrNull()
         }
+            if(childFragmentManager.fragments.first() is CharacterListFragment){
+                (childFragmentManager.fragments.first() as CharacterListFragment).adapter.notifyDataSetChanged()
+            }
         }
     }
 
     override fun OnReloadGM(scenario: mScenario) {
+        Scenario.clear()
+        (activity as NavigationHost).navigateTo(ScenarioListFragment(),false)
     }
 
     override fun OnKick(scenario: mScenario) {

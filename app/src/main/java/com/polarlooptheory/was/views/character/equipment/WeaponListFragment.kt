@@ -25,21 +25,10 @@ class WeaponListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mWeapon> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.equipment?.weapons?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Equipment.getWeapons(Scenario.connectedScenario.scenario, it.first) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
-
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            WeaponListAdapter(
-                list
-            )
+            WeaponListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

@@ -25,21 +25,10 @@ class ToolListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mTool> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.equipment?.tools?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Equipment.getTools(Scenario.connectedScenario.scenario, it.first) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
-
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            ToolListAdapter(
-                list
-            )
+            ToolListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

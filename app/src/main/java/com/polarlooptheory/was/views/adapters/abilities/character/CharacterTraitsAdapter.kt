@@ -8,13 +8,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mTrait
 import com.polarlooptheory.was.views.adapters.app.inflate
 import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class CharacterTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView.Adapter<CharacterTraitsAdapter.Holder>() {
+class CharacterTraitsAdapter : RecyclerView.Adapter<CharacterTraitsAdapter.Holder>() {
+    private var traitList: MutableList<mTrait> = mutableListOf()
+    init {
+        refreshList()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.list_row, false)
         return Holder(
@@ -22,13 +34,24 @@ class CharacterTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView
         )
     }
 
+    fun refreshList(){
+        traitList.clear()
+        GlobalScope.launch(Dispatchers.Main) {
+        Scenario.dummyCharacter?.abilities?.traits?.forEach {
+                val req =
+                    async { Abilities.getTraits(Scenario.connectedScenario.scenario, it) }.await()
+                if(!req.isNullOrEmpty()) traitList.add(req.first())
+            }
+            notifyDataSetChanged()
+        }
+    }
     override fun getItemCount(): Int {
         return traitList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = traitList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -55,9 +78,34 @@ class CharacterTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView
             }
         }
 
-        fun bind(trait: mTrait){
+        fun bind(trait: mTrait,adapter: CharacterTraitsAdapter){
             this.trait = trait
             view.listItemName.text = trait.name
+            view.deleteItemButton.setOnClickListener {
+                val character = Scenario.dummyCharacter
+                GlobalScope.launch(Dispatchers.Main) {
+                    if(character!!.abilities.traits.contains(trait.name)){
+                        character.abilities.traits -= listOf(trait.name)
+                        val req = async{
+                            Scenario.patchCharacterAbilities(
+                                Scenario.connectedScenario.scenario,
+                                character.name,
+                                character.abilities.features,
+                                character.abilities.languages,
+                                character.abilities.proficiencies,
+                                character.abilities.traits
+                            )}.await()
+                        if(req){
+                            (view.context as MainActivity).makeToast("Trait deleted")
+                            adapter.refreshList()
+                        }
+                        else{
+                            (view.context as MainActivity).makeToast(Settings.error_message)
+                            Settings.error_message = ""
+                        }
+                    }else (view.context as MainActivity).makeToast("Character doesn't have this traits")
+                }
+            }
         }
 
     }

@@ -20,26 +20,16 @@ import kotlinx.coroutines.launch
 
 class CharacterFeaturesFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: CharacterFeaturesAdapter
+    lateinit var adapter: CharacterFeaturesAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mFeature> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.abilities?.features?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Abilities.getFeatures(Scenario.connectedScenario.scenario, it) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            CharacterFeaturesAdapter(
-                list
-            )
+            CharacterFeaturesAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

@@ -69,4 +69,5 @@ class TabListAdapter(fm:FragmentManager, private val id: Int) : FragmentPagerAda
             else -> "ALL"
         }
     }
+
 }

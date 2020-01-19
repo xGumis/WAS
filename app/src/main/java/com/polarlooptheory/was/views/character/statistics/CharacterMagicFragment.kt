@@ -26,7 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterMagicFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterMagicFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +34,7 @@ class CharacterMagicFragment(private val char: mCharacter?, private val isNew : 
     ): View? {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_magic, container, false)
+        val char = Scenario.dummyCharacter
         if (char != null) {
             view.formSpellStat.setText(char.spells.baseStat)
             view.formSpellAttackBonus.setText(char.spells.spellAttackBonus.toString())
@@ -142,7 +143,7 @@ class CharacterMagicFragment(private val char: mCharacter?, private val isNew : 
                     Scenario.dummyCharacter?.spells?.spellSaveDc = dc.toInt()
                 GlobalScope.launch {
                     (parentFragment as NavigationHost).navigateTo(
-                        CharacterProficiencyFragment(char,isNew),
+                        CharacterProficiencyFragment(isNew),
                         false
                     )
                 }

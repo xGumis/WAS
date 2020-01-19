@@ -7,12 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mTrait
 import com.polarlooptheory.was.views.adapters.app.inflate
+import kotlinx.android.synthetic.main.base_list_row.view.*
 import kotlinx.android.synthetic.main.description_abilities.view.*
-import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class BaseTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView.Adapter<BaseTraitsAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -58,6 +66,31 @@ class BaseTraitsAdapter(private var traitList: List<mTrait>) : RecyclerView.Adap
         fun bind(trait: mTrait){
             this.trait = trait
             view.listItemName.text = trait.name
+            if (Scenario.dummyCharacter == null)
+                view.deleteItemButton.isVisible = false
+            else view.deleteItemButton.setOnClickListener {
+                val character = Scenario.dummyCharacter
+                GlobalScope.launch(Dispatchers.Main) {
+                    if(!character!!.abilities.traits.contains(trait.name)){
+                        character.abilities.traits += listOf(trait.name)
+                        val req = async{Scenario.patchCharacterAbilities(
+                            Scenario.connectedScenario.scenario,
+                            character.name,
+                            character.abilities.features,
+                            character.abilities.languages,
+                            character.abilities.proficiencies,
+                            character.abilities.traits
+                        )}.await()
+                        if(req){
+                            (view.context as MainActivity).makeToast("Trait added")
+                        }
+                        else{
+                            (view.context as MainActivity).makeToast(Settings.error_message)
+                            Settings.error_message = ""
+                        }
+                    }else (view.context as MainActivity).makeToast("Character already have this traits")
+                }
+            }
         }
 
     }

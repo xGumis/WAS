@@ -26,20 +26,10 @@ class SpellListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mSpell> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.spells?.spells?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Abilities.getSpells(Scenario.connectedScenario.scenario, it) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            SpellListAdapter(
-                list
-            )
+            SpellListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

@@ -1,12 +1,34 @@
 package com.polarlooptheory.was.apiCalls
 
 import android.util.Log
-import com.github.kittinunf.fuel.*
 import com.github.kittinunf.fuel.core.extensions.authentication
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
+import com.github.kittinunf.fuel.httpDelete
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Scenario.connectedScenario.charactersList
+import com.polarlooptheory.was.apiCalls.Scenario.connectedScenario.messagesList
+import com.polarlooptheory.was.apiCalls.Scenario.connectedScenario.notesList
+import com.polarlooptheory.was.apiCalls.Scenario.connectedScenario.scenario
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.armors
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.conditions
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.damageTypes
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.features
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.gear
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.languages
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.magicSchools
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.proficiencies
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.skills
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.spells
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.tools
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.traits
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.vehicles
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.weaponProperties
+import com.polarlooptheory.was.apiCalls.Scenario.loadedResources.weapons
+import com.polarlooptheory.was.apiCalls.Scenario.scenariosList
 import com.polarlooptheory.was.model.*
 import com.polarlooptheory.was.model.abilities.*
 import com.polarlooptheory.was.model.equipment.*
@@ -32,8 +54,6 @@ import org.json.JSONObject
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
-import java.lang.Error
-import java.lang.Exception
 
 /**
  * Object for handling scenarios
@@ -41,7 +61,8 @@ import java.lang.Exception
  */
 object Scenario {
     private const val endpoint = Settings.server_address + "api/v1/scenario"
-    private val mStompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP,"${Settings.server_address}rpg-server-kotlin")
+    private val mStompClient =
+        Stomp.over(Stomp.ConnectionProvider.OKHTTP, "${Settings.server_address}rpg-server-kotlin")
     private val compositeDisposable = CompositeDisposable()
     var scenariosList: List<mScenario> = listOf()
 
@@ -56,9 +77,9 @@ object Scenario {
         var scenario: mScenario = mScenario()
         var notesList: List<mNote> = listOf()
         var messagesList: List<mMessage> = listOf()
-        var charactersList: Map<String,mCharacter> = mapOf()
-        var chosenCharacter : mCharacter? = null
-        fun clear(){
+        var charactersList: Map<String, mCharacter> = mapOf()
+        var chosenCharacter: mCharacter? = null
+        fun clear() {
             scenario = mScenario()
             notesList = listOf()
             messagesList = listOf()
@@ -87,29 +108,29 @@ object Scenario {
      * @property spells Map of loaded [spells][mSpell]
      * @property traits Map of loaded [traits][mTrait]
      */
-    object loadedResources{
+    object loadedResources {
         //region Types
-        var conditions: MutableMap<String,mCondition> = mutableMapOf()
-        var damageTypes: MutableMap<String,mDamageType> = mutableMapOf()
-        var magicSchools: MutableMap<String,mMagicSchool> = mutableMapOf()
-        var weaponProperties: MutableMap<String,mWeaponProperty> = mutableMapOf()
+        var conditions: MutableMap<String, mCondition> = mutableMapOf()
+        var damageTypes: MutableMap<String, mDamageType> = mutableMapOf()
+        var magicSchools: MutableMap<String, mMagicSchool> = mutableMapOf()
+        var weaponProperties: MutableMap<String, mWeaponProperty> = mutableMapOf()
         //endregion
         //region Equipment
-        var armors: MutableMap<String,mArmor> = mutableMapOf()
-        var gear: MutableMap<String,mGear> = mutableMapOf()
-        var tools: MutableMap<String,mTool> = mutableMapOf()
-        var vehicles: MutableMap<String,mVehicle> = mutableMapOf()
-        var weapons: MutableMap<String,mWeapon> = mutableMapOf()
+        var armors: MutableMap<String, mArmor> = mutableMapOf()
+        var gear: MutableMap<String, mGear> = mutableMapOf()
+        var tools: MutableMap<String, mTool> = mutableMapOf()
+        var vehicles: MutableMap<String, mVehicle> = mutableMapOf()
+        var weapons: MutableMap<String, mWeapon> = mutableMapOf()
         //endregion
         //region Abilities
-        var features: MutableMap<String,mFeature> = mutableMapOf()
-        var languages: MutableMap<String,mLanguage> = mutableMapOf()
-        var proficiencies: MutableMap<String,mProficiency> = mutableMapOf()
-        var skills: MutableMap<String,mSkill> = mutableMapOf()
-        var spells: MutableMap<String,mSpell> = mutableMapOf()
-        var traits: MutableMap<String,mTrait> = mutableMapOf()
+        var features: MutableMap<String, mFeature> = mutableMapOf()
+        var languages: MutableMap<String, mLanguage> = mutableMapOf()
+        var proficiencies: MutableMap<String, mProficiency> = mutableMapOf()
+        var skills: MutableMap<String, mSkill> = mutableMapOf()
+        var spells: MutableMap<String, mSpell> = mutableMapOf()
+        var traits: MutableMap<String, mTrait> = mutableMapOf()
         //endregion
-        fun clear(){
+        fun clear() {
             traits.clear()
             spells.clear()
             skills.clear()
@@ -320,7 +341,7 @@ object Scenario {
         suspend fun deletePlayer(scenario: mScenario, player: String): Boolean {
             if (isGM(scenario)) {
                 val endpoint =
-                    "${Settings.server_address}action/remove/character/scenario/${scenario.scenarioKey}"
+                    "${Settings.server_address}action/remove/player/scenario/${scenario.scenarioKey}"
                 var success = false
                 runBlocking {
                     val (_, _, result) = endpoint.httpDelete(listOf("player" to player)).authentication().bearer(
@@ -494,7 +515,7 @@ object Scenario {
             json.put("characterName", character.name)
             json.put("dices", numberOfDices)
             json.put("value", dicesValue)
-            json.put("visible",visible)
+            json.put("visible", visible)
             val (_, _, result) = endpoint.httpPost().jsonBody(json.toString()).authentication().bearer(
                 User.UserToken.access_token
             ).awaitStringResponseResult()
@@ -505,7 +526,7 @@ object Scenario {
                 }
                 is Result.Failure -> {
                     if (ApiErrorHandling.handleError(result.error))
-                        rollDice(scenario, character, numberOfDices, dicesValue,visible)
+                        rollDice(scenario, character, numberOfDices, dicesValue, visible)
                 }
             }
         }
@@ -593,7 +614,7 @@ object Scenario {
             ).authentication().bearer(User.UserToken.access_token).awaitStringResponseResult()
             when (result) {
                 is Result.Success -> {
-                    val tmplist: MutableMap<String,mCharacter> = mutableMapOf()
+                    val tmplist: MutableMap<String, mCharacter> = mutableMapOf()
                     val json = JSONArray(result.value)
                     for (i in 0 until json.length()) {
                         val obj = json.getJSONObject(i)
@@ -632,20 +653,36 @@ object Scenario {
                             owner = obj.getString("owner")
                         )
                         val ab = obj.getJSONObject("abilities")
-                        tmpCharacter.abilities.features = List(ab.getJSONArray("features").length()){ab.getJSONArray("features").getString(it)}
-                        tmpCharacter.abilities.traits = List(ab.getJSONArray("traits").length()){ab.getJSONArray("traits").getString(it)}
-                        tmpCharacter.abilities.languages = List(ab.getJSONArray("languages").length()){ab.getJSONArray("languages").getString(it)}
-                        tmpCharacter.abilities.proficiencies = List(ab.getJSONArray("proficiencies").length()){ab.getJSONArray("proficiencies").getString(it)}
+                        tmpCharacter.abilities.features =
+                            List(ab.getJSONArray("features").length()) {
+                                ab.getJSONArray("features").getString(it)
+                            }
+                        tmpCharacter.abilities.traits = List(ab.getJSONArray("traits").length()) {
+                            ab.getJSONArray("traits").getString(it)
+                        }
+                        tmpCharacter.abilities.languages =
+                            List(ab.getJSONArray("languages").length()) {
+                                ab.getJSONArray("languages").getString(it)
+                            }
+                        tmpCharacter.abilities.proficiencies =
+                            List(ab.getJSONArray("proficiencies").length()) {
+                                ab.getJSONArray("proficiencies").getString(it)
+                            }
                         val eq = obj.getJSONObject("equipment")
                         tmpCharacter.equipment.armorClass = eq.getInt("armorClass")
-                        tmpCharacter.equipment.armors = List(eq.getJSONArray("armors").length()){val o = eq.getJSONArray("armors").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
+                        tmpCharacter.equipment.armors = List(eq.getJSONArray("armors").length()) {
+                            val o = eq.getJSONArray("armors")
+                                .getJSONObject(it); Pair(o.getString("name"), o.getInt("amount"))
+                        }
                         val attcks = eq.getJSONArray("attacks")
-                        tmpCharacter.equipment.attacks = List(attcks.length()){ mCharacter.Equipment.Attack(
-                            bonus = attcks.getJSONObject(it).getInt("bonus"),
-                            damage = attcks.getJSONObject(it).getString("damage"),
-                            name = attcks.getJSONObject(it).getString("name"),
-                            type = attcks.getJSONObject(it).getString("type")
-                        )}
+                        tmpCharacter.equipment.attacks = List(attcks.length()) {
+                            mCharacter.Equipment.Attack(
+                                bonus = attcks.getJSONObject(it).getInt("bonus"),
+                                damage = attcks.getJSONObject(it).getString("damage"),
+                                name = attcks.getJSONObject(it).getString("name"),
+                                type = attcks.getJSONObject(it).getString("type")
+                            )
+                        }
                         tmpCharacter.equipment.currency = mCharacter.Equipment.Currency(
                             cp = eq.getJSONObject("currency").getInt("cp"),
                             sp = eq.getJSONObject("currency").getInt("sp"),
@@ -653,21 +690,43 @@ object Scenario {
                             gp = eq.getJSONObject("currency").getInt("gp"),
                             pp = eq.getJSONObject("currency").getInt("pp")
                         )
-                        tmpCharacter.equipment.gear = List(eq.getJSONArray("gear").length()){val o =eq.getJSONArray("gear").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
-                        tmpCharacter.equipment.tools = List(eq.getJSONArray("tools").length()){val o =eq.getJSONArray("tools").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
-                        tmpCharacter.equipment.vehicles = List(eq.getJSONArray("vehicles").length()){val o =eq.getJSONArray("vehicles").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
-                        tmpCharacter.equipment.weapons = List(eq.getJSONArray("weapons").length()){val o =eq.getJSONArray("weapons").getJSONObject(it); Pair(o.getString("name"),o.getInt("amount"))}
+                        tmpCharacter.equipment.gear = List(eq.getJSONArray("gear").length()) {
+                            val o = eq.getJSONArray("gear").getJSONObject(it); Pair(
+                            o.getString("name"),
+                            o.getInt("amount")
+                        )
+                        }
+                        tmpCharacter.equipment.tools = List(eq.getJSONArray("tools").length()) {
+                            val o = eq.getJSONArray("tools")
+                                .getJSONObject(it); Pair(o.getString("name"), o.getInt("amount"))
+                        }
+                        tmpCharacter.equipment.vehicles =
+                            List(eq.getJSONArray("vehicles").length()) {
+                                val o = eq.getJSONArray("vehicles").getJSONObject(it); Pair(
+                                o.getString(
+                                    "name"
+                                ), o.getInt("amount")
+                            )
+                            }
+                        tmpCharacter.equipment.weapons = List(eq.getJSONArray("weapons").length()) {
+                            val o = eq.getJSONArray("weapons")
+                                .getJSONObject(it); Pair(o.getString("name"), o.getInt("amount"))
+                        }
                         val spells = obj.getJSONObject("spells")
                         tmpCharacter.spells.baseStat = spells.getString("baseStat")
                         tmpCharacter.spells.spellAttackBonus = spells.getInt("spellAttackBonus")
                         tmpCharacter.spells.spellSaveDc = spells.getInt("spellSaveDc")
                         val slots = spells.getJSONArray("spellSlots")
-                        tmpCharacter.spells.spellSlots = List(slots.length()){Spells.SpellSlot(
-                            level = slots.getJSONObject(it).getInt("level"),
-                            total = slots.getJSONObject(it).getInt("total"),
-                            used = slots.getJSONObject(it).getInt("used")
-                        )}
-                        tmpCharacter.spells.spells = List(spells.getJSONArray("spells").length()){spells.getJSONArray("spells").getString(it)}
+                        tmpCharacter.spells.spellSlots = List(slots.length()) {
+                            Spells.SpellSlot(
+                                level = slots.getJSONObject(it).getInt("level"),
+                                total = slots.getJSONObject(it).getInt("total"),
+                                used = slots.getJSONObject(it).getInt("used")
+                            )
+                        }
+                        tmpCharacter.spells.spells = List(spells.getJSONArray("spells").length()) {
+                            spells.getJSONArray("spells").getString(it)
+                        }
                         tmplist[tmpCharacter.name] = tmpCharacter
                     }
                     connectedScenario.charactersList = tmplist
@@ -905,8 +964,8 @@ object Scenario {
             json.put("speed", speed)
         val client = HttpClient()
         runBlocking {
-            val result = client.patch<HttpResponse>(endpoint){
-                header("Authorization","Bearer "+User.UserToken.access_token)
+            val result = client.patch<HttpResponse>(endpoint) {
+                header("Authorization", "Bearer " + User.UserToken.access_token)
                 body = TextContent(json.toString(), ContentType.Application.Json)
             }
             when (result.status.value) {
@@ -980,20 +1039,20 @@ object Scenario {
         json.put("name", name)
         val feat = JSONArray()
         features?.forEach { feat.put(it) }
-        json.put("features",feat)
+        json.put("features", feat)
         val lang = JSONArray()
         languages?.forEach { lang.put(it) }
-        json.put("languages",lang)
+        json.put("languages", lang)
         val prof = JSONArray()
         proficiencies?.forEach { prof.put(it) }
-        json.put("proficiencies",prof)
+        json.put("proficiencies", prof)
         val tr = JSONArray()
         traits?.forEach { tr.put(it) }
-        json.put("traits",tr)
+        json.put("traits", tr)
         val client = HttpClient()
         runBlocking {
-            val result = client.patch<HttpResponse>(endpoint){
-                header("Authorization","Bearer "+User.UserToken.access_token)
+            val result = client.patch<HttpResponse>(endpoint) {
+                header("Authorization", "Bearer " + User.UserToken.access_token)
                 body = TextContent(json.toString(), ContentType.Application.Json)
             }
             when (result.status.value) {
@@ -1023,7 +1082,7 @@ object Scenario {
         }*/
         return success
     }
-    
+
     /**
      * Patches a [character][mCharacter]'s [equipment][mCharacter.Equipment] in the [scenario]
      * @param scenario [Scenario][mScenario] to put the [character][mCharacter] into
@@ -1046,17 +1105,17 @@ object Scenario {
         scenario: mScenario,
         name: String,
         armorClass: Int? = null,
-        armors: List<Pair<String,Int>>? = null,
+        armors: List<Pair<String, Int>>? = null,
         attacks: List<mCharacter.Equipment.Attack>? = null,
         cp: Int? = null,
         sp: Int? = null,
         ep: Int? = null,
         gp: Int? = null,
         pp: Int? = null,
-        gear: List<Pair<String,Int>>? = null,
-        tools: List<Pair<String,Int>>? = null,
-        vehicles: List<Pair<String,Int>>? = null,
-        weapons: List<Pair<String,Int>>? = null
+        gear: List<Pair<String, Int>>? = null,
+        tools: List<Pair<String, Int>>? = null,
+        vehicles: List<Pair<String, Int>>? = null,
+        weapons: List<Pair<String, Int>>? = null
     ): Boolean {
         val endpoint =
             "${Settings.server_address}action/update/characterEquipment/scenario/${scenario.scenarioKey}"
@@ -1064,55 +1123,55 @@ object Scenario {
         val json = JSONObject()
         json.put("name", name)
         if (armorClass != null)
-            json.put("armorClass",armorClass)
+            json.put("armorClass", armorClass)
         val attcs = JSONArray()
-        attacks?.forEach { 
+        attacks?.forEach {
             val att = JSONObject()
-            if(it.bonus != null)
-                att.put("bonus",it.bonus)
-            if(it.damage != null)
-                att.put("damage",it.damage)
-            if(it.name != null)
-                att.put("name",it.name)
-            if(it.type != null)
-                att.put("type",it.type)
+            if (it.bonus != null)
+                att.put("bonus", it.bonus)
+            if (it.damage != null)
+                att.put("damage", it.damage)
+            if (it.name != null)
+                att.put("name", it.name)
+            if (it.type != null)
+                att.put("type", it.type)
             attcs.put(att)
         }
-        json.put("attacks",attcs)
+        json.put("attacks", attcs)
         val arm = JSONArray()
-        armors?.forEach { arm.put(JSONObject().put("name",it.first).put("amount",it.second)) }
-        json.put("armors",arm)
+        armors?.forEach { arm.put(JSONObject().put("name", it.first).put("amount", it.second)) }
+        json.put("armors", arm)
         val curr = JSONObject()
-        if(cp != null)
-            curr.put("cp",cp)
-        if(sp != null)
-            curr.put("sp",sp)
-        if(ep != null)
-            curr.put("ep",ep)
-        if(gp != null)
-            curr.put("gp",gp)
-        if(pp != null)
-            curr.put("pp",pp)
-        json.put("currency",curr)
+        if (cp != null)
+            curr.put("cp", cp)
+        if (sp != null)
+            curr.put("sp", sp)
+        if (ep != null)
+            curr.put("ep", ep)
+        if (gp != null)
+            curr.put("gp", gp)
+        if (pp != null)
+            curr.put("pp", pp)
+        json.put("currency", curr)
         val gr = JSONArray()
-        gear?.forEach { gr.put(JSONObject().put("name",it.first).put("amount",it.second)) }
-        json.put("gear",gr)
+        gear?.forEach { gr.put(JSONObject().put("name", it.first).put("amount", it.second)) }
+        json.put("gear", gr)
         val tl = JSONArray()
-        tools?.forEach { tl.put(JSONObject().put("name",it.first).put("amount",it.second)) }
-        json.put("tools",tl)
+        tools?.forEach { tl.put(JSONObject().put("name", it.first).put("amount", it.second)) }
+        json.put("tools", tl)
         val veh = JSONArray()
-        vehicles?.forEach { veh.put(JSONObject().put("name",it.first).put("amount",it.second)) }
-        json.put("vehicles",veh)
+        vehicles?.forEach { veh.put(JSONObject().put("name", it.first).put("amount", it.second)) }
+        json.put("vehicles", veh)
         val weap = JSONArray()
-        weapons?.forEach { weap.put(JSONObject().put("name",it.first).put("amount",it.second)) }
-        json.put("weapons",weap)
+        weapons?.forEach { weap.put(JSONObject().put("name", it.first).put("amount", it.second)) }
+        json.put("weapons", weap)
         val client = HttpClient()
         runBlocking {
             try {
-                val result = client.patch<HttpResponse>(endpoint){
-                header("Authorization","Bearer "+User.UserToken.access_token)
-                body = TextContent(json.toString(), ContentType.Application.Json)
-            }
+                val result = client.patch<HttpResponse>(endpoint) {
+                    header("Authorization", "Bearer " + User.UserToken.access_token)
+                    body = TextContent(json.toString(), ContentType.Application.Json)
+                }
                 when (result.status.value) {
                     200 -> {
                         success = true
@@ -1121,7 +1180,7 @@ object Scenario {
                         Settings.error_message = result.readText()
                     }
                 }
-            }catch(e:Exception){
+            } catch (e: Exception) {
                 println(e.message)
             }
             client.close()
@@ -1143,7 +1202,7 @@ object Scenario {
         }*/
         return success
     }
-    
+
     /**
      * Patches a [character][mCharacter]'s [spells][mCharacter.Spells] in the [scenario]
      * @param scenario [Scenario][mScenario] to put the [character][mCharacter] into
@@ -1170,30 +1229,30 @@ object Scenario {
         val json = JSONObject()
         json.put("name", name)
         if (baseStat != null)
-            json.put("baseStat",baseStat)
+            json.put("baseStat", baseStat)
         if (spellAttackBonus != null)
-            json.put("spellAttackBonus",spellAttackBonus)
+            json.put("spellAttackBonus", spellAttackBonus)
         if (spellSaveDc != null)
-            json.put("spellSaveDc",spellSaveDc)
+            json.put("spellSaveDc", spellSaveDc)
         val sss = JSONArray()
-        spellSlots?.forEach { 
+        spellSlots?.forEach {
             val ss = JSONObject()
             if (it.level != null)
-                ss.put("level",it.level)
+                ss.put("level", it.level)
             if (it.total != null)
-                ss.put("total",it.total)
+                ss.put("total", it.total)
             if (it.used != null)
-                ss.put("used",it.used)
+                ss.put("used", it.used)
             sss.put(ss)
         }
-        json.put("spellSlots",sss)
+        json.put("spellSlots", sss)
         val spls = JSONArray()
         spells?.forEach { spls.put(it) }
-        json.put("spells",spls)
+        json.put("spells", spls)
         val client = HttpClient()
         runBlocking {
-            val result = client.patch<HttpResponse>(endpoint){
-                header("Authorization","Bearer "+User.UserToken.access_token)
+            val result = client.patch<HttpResponse>(endpoint) {
+                header("Authorization", "Bearer " + User.UserToken.access_token)
                 body = TextContent(json.toString(), ContentType.Application.Json)
             }
             when (result.status.value) {
@@ -1333,18 +1392,18 @@ object Scenario {
         json.put("content", content)
         val client = HttpClient()
         runBlocking {
-            val result = client.patch<HttpResponse>(endpoint){
-                header("Authorization","Bearer "+User.UserToken.access_token)
+            val result = client.patch<HttpResponse>(endpoint) {
+                header("Authorization", "Bearer " + User.UserToken.access_token)
                 body = TextContent(json.toString(), ContentType.Application.Json)
             }
             when (result.status.value) {
-            200 -> {
-                getNotes(scenario)
-                success = true
-            }
-            else -> {
-                Settings.error_message = result.readText()
-            }
+                200 -> {
+                    getNotes(scenario)
+                    success = true
+                }
+                else -> {
+                    Settings.error_message = result.readText()
+                }
             }
             client.close()
         }
@@ -1463,120 +1522,135 @@ object Scenario {
      * @param scenario Scenario to join
      * @param listener Actions' [listener][ISocketListener]
      */
-    fun joinWebsocket(scenario: mScenario, listener: ISocketListener): Boolean{
+    fun joinWebsocket(scenario: mScenario, listener: ISocketListener): Boolean {
         var success = false
         val lifecycle = mStompClient.lifecycle().subscribe { event ->
-            when(event.type){
+            when (event.type) {
                 LifecycleEvent.Type.OPENED -> {
-                    Log.i("STOMP","Connection opened")
+                    Log.i("STOMP", "Connection opened")
                     success = true
                 }
                 LifecycleEvent.Type.ERROR -> {
-                    Log.i("STOMP","Error ",event.exception)
+                    Log.i("STOMP", "Error ", event.exception)
                     Settings.error_message = event.exception.message.orEmpty()
                 }
                 LifecycleEvent.Type.CLOSED -> {
-                    Log.i("STOMP","Connection closed")
+                    Log.i("STOMP", "Connection closed")
                 }
                 LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT -> {
-                    Log.i("STOMP","Failed server heartbeat")
+                    Log.i("STOMP", "Failed server heartbeat")
                 }
-                null -> {}
+                null -> {
+                }
             }
         }
-        if(!mStompClient.isConnected)
-            mStompClient.connect(listOf(StompHeader("X-Authorization",User.UserToken.access_token)))
-        val playerTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}/player/${User.username}").subscribe({msg -> run{
-            val json = JSONObject(msg.payload)
-            when(json.getString("action")){
-                "message" -> {
-                    GlobalScope.launch { getMessages(scenario) }
-                    val msg_json = json.getJSONObject("body")
-                    val tmpMsg = mMessage(
-                        content = msg_json.getString("content"),
-                        sender = msg_json.getString("sender"),
-                        whisperTarget = msg_json.getString("whisperTarget"),
-                        type = when (msg_json.getString("type")) {
-                            "system" -> mMessage.Type.SYSTEM
-                            "character" -> mMessage.Type.CHARACTER
-                            "whisper" -> mMessage.Type.WHISPER
-                            else -> mMessage.Type.OOC
-                        }
+        if (!mStompClient.isConnected)
+            mStompClient.connect(
+                listOf(
+                    StompHeader(
+                        "X-Authorization",
+                        User.UserToken.access_token
                     )
-                    listener.OnPrivateMessageRecieved(scenario,tmpMsg)
-                }
-                "reload" -> {
-                    when(json.getString("target")){
-                        "characters" -> {
-                            GlobalScope.launch {
-                                if(async{getCharacters(scenario)}.await())
-                                    listener.OnReloadCharacters(scenario)
-                                else listener.OnErrorRecieved(scenario)
+                )
+            )
+        val playerTopic =
+            mStompClient.topic("/ws/scenario/${scenario.scenarioKey}/player/${User.username}")
+                .subscribe({ msg ->
+                    run {
+                        val json = JSONObject(msg.payload)
+                        when (json.getString("action")) {
+                            "message" -> {
+                                GlobalScope.launch { getMessages(scenario) }
+                                val msg_json = json.getJSONObject("body")
+                                val tmpMsg = mMessage(
+                                    content = msg_json.getString("content"),
+                                    sender = msg_json.getString("sender"),
+                                    whisperTarget = msg_json.getString("whisperTarget"),
+                                    type = when (msg_json.getString("type")) {
+                                        "system" -> mMessage.Type.SYSTEM
+                                        "character" -> mMessage.Type.CHARACTER
+                                        "whisper" -> mMessage.Type.WHISPER
+                                        else -> mMessage.Type.OOC
+                                    }
+                                )
+                                listener.OnPrivateMessageRecieved(scenario, tmpMsg)
+                            }
+                            "reload" -> {
+                                when (json.getString("target")) {
+                                    "characters" -> {
+                                        GlobalScope.launch {
+                                            if (async { getCharacters(scenario) }.await())
+                                                listener.OnReloadCharacters(scenario)
+                                            else listener.OnErrorRecieved(scenario)
+                                        }
+                                    }
+                                    "gameMaster" -> {
+                                        GlobalScope.launch {
+                                            if (async { getPlayers(scenario) }.await())
+                                                listener.OnReloadGM(scenario)
+                                            else listener.OnErrorRecieved(scenario)
+                                        }
+                                    }
+                                    else -> {
+                                        Settings.error_message = "Unexpecter reload target"
+                                        listener.OnErrorRecieved(scenario)
+                                    }
+                                }
+
+                            }
+                            "leave" -> {
+                                clearScenarioCache()
+                                listener.OnKick(scenario)
+                            }
+                            else -> {
+                                Settings.error_message = "Unexpected action"
+                                listener.OnErrorRecieved(scenario)
                             }
                         }
-                        "gameMaster" -> {
-                            GlobalScope.launch {
-                                if(async{getPlayers(scenario)}.await())
-                                    listener.OnReloadGM(scenario)
-                                else listener.OnErrorRecieved(scenario)
+                    }
+                },
+                    { err -> Log.i("PlayerSTOMP", err.message) })
+        val scenarioTopic =
+            mStompClient.topic("/ws/scenario/${scenario.scenarioKey}").subscribe({ msg ->
+                run {
+                    val json = JSONObject(msg.payload)
+                    when (json.getString("action")) {
+                        "message" -> {
+                            GlobalScope.launch { getMessages(scenario) }
+                            val msg_json = json.getJSONObject("body")
+                            val tmpMsg = mMessage(
+                                content = msg_json.getString("content"),
+                                sender = msg_json.getString("sender"),
+                                whisperTarget = msg_json.getString("whisperTarget"),
+                                type = when (msg_json.getString("type")) {
+                                    "system" -> mMessage.Type.SYSTEM
+                                    "character" -> mMessage.Type.CHARACTER
+                                    "whisper" -> mMessage.Type.WHISPER
+                                    else -> mMessage.Type.OOC
+                                }
+                            )
+                            listener.OnMessageRecieved(scenario, tmpMsg)
+                        }
+                        "reload" -> {
+                            if (json.getString("target") == "players") {
+                                GlobalScope.launch {
+                                    if (async { getPlayers(scenario) }.await())
+                                        listener.OnErrorRecieved(scenario)
+                                    else listener.OnReloadPlayers(scenario)
+                                }
+                            } else {
+                                Settings.error_message = "Unexpecter reload target"
+                                listener.OnErrorRecieved(scenario)
                             }
                         }
                         else -> {
-                            Settings.error_message = "Unexpecter reload target"
+                            Settings.error_message = "Unexpected action"
                             listener.OnErrorRecieved(scenario)
                         }
                     }
-
                 }
-                "leave" -> {
-                    clearScenarioCache()
-                    listener.OnKick(scenario)
-                }
-                else ->{
-                    Settings.error_message = "Unexpected action"
-                    listener.OnErrorRecieved(scenario)
-                }
-            }
-        }},
-            {err -> Log.i("PlayerSTOMP",err.message)})
-        val scenarioTopic = mStompClient.topic("/ws/scenario/${scenario.scenarioKey}").subscribe({msg -> run{
-            val json = JSONObject(msg.payload)
-            when(json.getString("action")){
-                "message" -> {
-                    GlobalScope.launch { getMessages(scenario) }
-                    val msg_json = json.getJSONObject("body")
-                    val tmpMsg = mMessage(
-                        content = msg_json.getString("content"),
-                        sender = msg_json.getString("sender"),
-                        whisperTarget = msg_json.getString("whisperTarget"),
-                        type = when (msg_json.getString("type")) {
-                            "system" -> mMessage.Type.SYSTEM
-                            "character" -> mMessage.Type.CHARACTER
-                            "whisper" -> mMessage.Type.WHISPER
-                            else -> mMessage.Type.OOC
-                        }
-                    )
-                    listener.OnMessageRecieved(scenario,tmpMsg)
-                }
-                "reload" -> {
-                    if(json.getString("target")=="players"){
-                        GlobalScope.launch {
-                            if(async{getPlayers(scenario)}.await())
-                                listener.OnErrorRecieved(scenario)
-                            else listener.OnReloadPlayers(scenario)
-                        }
-                    }else{
-                        Settings.error_message = "Unexpecter reload target"
-                        listener.OnErrorRecieved(scenario)
-                    }
-                }
-                else ->{
-                    Settings.error_message = "Unexpected action"
-                    listener.OnErrorRecieved(scenario)
-                }
-            }
-        }},
-            {err -> Log.i("ScenarioSTOMP",err.message)})
+            },
+                { err -> Log.i("ScenarioSTOMP", err.message) })
         compositeDisposable.add(lifecycle)
         compositeDisposable.add(scenarioTopic)
         compositeDisposable.add(playerTopic)
@@ -1588,7 +1662,7 @@ object Scenario {
      *
      * Use with leaving scenario
      */
-    fun leaveWebsocket(){
+    fun leaveWebsocket() {
         mStompClient.disconnect()
         compositeDisposable.clear()
     }
@@ -1596,31 +1670,37 @@ object Scenario {
     /**
      * Interface for handling the websocket actions in UI
      */
-    interface ISocketListener{
+    interface ISocketListener {
         /**
          * Called on need for players' list reload
          */
         fun OnReloadPlayers(scenario: mScenario)
+
         /**
          * Called on need for characters' list reload
          */
         fun OnReloadCharacters(scenario: mScenario)
+
         /**
          * Called on need for GM reload
          */
         fun OnReloadGM(scenario: mScenario)
+
         /**
          * Called when player is kicked from scenario
          */
         fun OnKick(scenario: mScenario)
+
         /**
          * Called when player got message on private socket
          */
         fun OnPrivateMessageRecieved(scenario: mScenario, message: mMessage)
+
         /**
          * Called when player got message on scenario public socket
          */
         fun OnMessageRecieved(scenario: mScenario, message: mMessage)
+
         /**
          * Called when some kind of error occurred(see [ErrorHandling][ApiErrorHandling.handleError])
          */
@@ -1636,11 +1716,13 @@ object Scenario {
         scenariosList = listOf()
         clearScenarioCache()
     }
-    private fun clearScenarioCache(){
+
+    private fun clearScenarioCache() {
         connectedScenario.clear()
         loadedResources.clear()
+        dummyCharacter = null
     }
 
-    var dummyCharacter : mCharacter? = null
+    var dummyCharacter: mCharacter? = null
 
 }

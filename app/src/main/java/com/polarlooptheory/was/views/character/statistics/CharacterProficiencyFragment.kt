@@ -28,7 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterProficiencyFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterProficiencyFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +36,7 @@ class CharacterProficiencyFragment(private val char: mCharacter?, private val is
     ): View? {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_proficiencies, container, false)
+        val char = Scenario.dummyCharacter
         if(char!=null){
             view.formProficiency.setText(char.proficiency.toString())
             view.formPassivePerception.setText(char.passivePerception.toString())
@@ -154,7 +155,7 @@ class CharacterProficiencyFragment(private val char: mCharacter?, private val is
             if(pin.isNotBlank() && pin.isDigitsOnly())
                 Scenario.dummyCharacter?.inspiration = pin.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(isNew), false)
             }
         }
         view.buttonNext.setOnClickListener {
@@ -171,7 +172,7 @@ class CharacterProficiencyFragment(private val char: mCharacter?, private val is
             if(pin.isNotBlank() && pin.isDigitsOnly())
                 Scenario.dummyCharacter?.inspiration = pin.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterMagicFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterMagicFragment(isNew), false)
             }
         }
         return view

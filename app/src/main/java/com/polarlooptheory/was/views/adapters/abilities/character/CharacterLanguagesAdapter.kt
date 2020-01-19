@@ -8,19 +8,43 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mLanguage
 import com.polarlooptheory.was.views.adapters.app.inflate
 import kotlinx.android.synthetic.main.description_abilities.view.detailsName
 import kotlinx.android.synthetic.main.description_abilities_language.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class CharacterLanguagesAdapter(private var languageList: List<mLanguage>) : RecyclerView.Adapter<CharacterLanguagesAdapter.Holder>() {
+class CharacterLanguagesAdapter : RecyclerView.Adapter<CharacterLanguagesAdapter.Holder>() {
+    private var languageList: MutableList<mLanguage> = mutableListOf()
+    init{
+        refreshList()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.list_row, false)
         return Holder(
             inflatedView
         )
+    }
+
+    fun refreshList(){
+        languageList.clear()
+        GlobalScope.launch(Dispatchers.Main) {
+        Scenario.dummyCharacter?.abilities?.languages?.forEach {
+                val req =
+                    async { Abilities.getLanguages(Scenario.connectedScenario.scenario, it) }.await()
+                if(!req.isNullOrEmpty()) languageList.add(req.first())
+            }
+            notifyDataSetChanged()
+        }
     }
 
     override fun getItemCount(): Int {
@@ -29,7 +53,7 @@ class CharacterLanguagesAdapter(private var languageList: List<mLanguage>) : Rec
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = languageList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -57,9 +81,34 @@ class CharacterLanguagesAdapter(private var languageList: List<mLanguage>) : Rec
             }
         }
 
-        fun bind(language: mLanguage){
+        fun bind(language: mLanguage,adapter: CharacterLanguagesAdapter){
             this.language = language
             view.listItemName.text = language.name
+            view.deleteItemButton.setOnClickListener {
+                val character = Scenario.dummyCharacter
+                GlobalScope.launch(Dispatchers.Main) {
+                    if(character!!.abilities.languages.contains(language.name)){
+                        character.abilities.languages -= listOf(language.name)
+                        val req = async{
+                            Scenario.patchCharacterAbilities(
+                                Scenario.connectedScenario.scenario,
+                                character.name,
+                                character.abilities.features,
+                                character.abilities.languages,
+                                character.abilities.proficiencies,
+                                character.abilities.traits
+                            )}.await()
+                        if(req){
+                            (view.context as MainActivity).makeToast("Language deleted")
+                            adapter.refreshList()
+                        }
+                        else{
+                            (view.context as MainActivity).makeToast(Settings.error_message)
+                            Settings.error_message = ""
+                        }
+                    }else (view.context as MainActivity).makeToast("Character doesn't know this language")
+                }
+            }
         }
 
     }

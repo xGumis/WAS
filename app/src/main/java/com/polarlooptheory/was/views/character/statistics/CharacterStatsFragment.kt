@@ -28,7 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterStatsFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterStatsFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +36,7 @@ class CharacterStatsFragment(private val char: mCharacter?, private val isNew : 
     ): View? {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_stats, container, false)
+        val char = Scenario.dummyCharacter
         if(char!=null){
             view.formStrength.setText(char.attributes.strength.toString())
             view.formDexterity.setText(char.attributes.dexterity.toString())
@@ -168,7 +169,7 @@ class CharacterStatsFragment(private val char: mCharacter?, private val isNew : 
             if(chr.isNotBlank() && chr.isDigitsOnly())
                 Scenario.dummyCharacter?.attributes?.charisma = chr.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterHealthFragment(isNew), false)
             }
         }
         view.buttonBack.setOnClickListener {
@@ -191,7 +192,7 @@ class CharacterStatsFragment(private val char: mCharacter?, private val isNew : 
             if(chr.isNotBlank() && chr.isDigitsOnly())
                 Scenario.dummyCharacter?.attributes?.charisma = chr.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterBackgroundFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterBackgroundFragment(isNew), false)
             }
         }
         return view

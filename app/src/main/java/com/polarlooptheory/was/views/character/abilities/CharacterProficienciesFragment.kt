@@ -26,20 +26,10 @@ class CharacterProficienciesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mProficiency> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.abilities?.proficiencies?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Abilities.getProficiencies(Scenario.connectedScenario.scenario, it) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            CharacterProficienciesAdapter(
-                list
-            )
+            CharacterProficienciesAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

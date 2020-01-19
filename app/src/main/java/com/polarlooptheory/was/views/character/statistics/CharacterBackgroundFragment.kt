@@ -22,7 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterBackgroundFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterBackgroundFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +30,7 @@ class CharacterBackgroundFragment(private val char: mCharacter?, private val isN
     ): View? {
         if(Scenario.dummyCharacter==null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_background, container, false)
+        val char = Scenario.dummyCharacter
         if(char!=null){
             view.formProfession.setText(char.profession)
             view.formBackground.setText(char.background)
@@ -140,7 +141,7 @@ class CharacterBackgroundFragment(private val char: mCharacter?, private val isN
                 val exp = view.formBackground.text.toString()
                 if(exp.isNotBlank() && exp.isDigitsOnly())
                     Scenario.dummyCharacter?.experience = exp.toInt()
-                (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(isNew), false)
             }
         }
         view.buttonNext.setOnClickListener {
@@ -153,7 +154,7 @@ class CharacterBackgroundFragment(private val char: mCharacter?, private val isN
                 val exp = view.formBackground.text.toString()
                 if(exp.isNotBlank() && exp.isDigitsOnly())
                     Scenario.dummyCharacter?.experience = exp.toInt()
-                (parentFragment as NavigationHost).navigateTo(CharacterStatsFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterStatsFragment(isNew), false)
             }
         }
         return view

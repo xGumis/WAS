@@ -27,7 +27,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterHealthFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterHealthFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +35,7 @@ class CharacterHealthFragment(private val char: mCharacter?, private val isNew :
     ): View? {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_health, container, false)
+        val char = Scenario.dummyCharacter
         if (char != null) {
             view.formMaxHP.setText(char.health.maxHealth.toString())
             view.formCurrentHP.setText(char.health.actualHealth.toString())
@@ -163,7 +164,7 @@ class CharacterHealthFragment(private val char: mCharacter?, private val isNew :
             if(use.isNotBlank() && use.isDigitsOnly())
                 Scenario.dummyCharacter?.hitDices?.used = use.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterProficiencyFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterProficiencyFragment(isNew), false)
             }
         }
         view.buttonBack.setOnClickListener {
@@ -184,7 +185,7 @@ class CharacterHealthFragment(private val char: mCharacter?, private val isNew :
             if(use.isNotBlank() && use.isDigitsOnly())
                 Scenario.dummyCharacter?.hitDices?.used = use.toInt()
             GlobalScope.launch {
-                (parentFragment as NavigationHost).navigateTo(CharacterStatsFragment(char,isNew), false)
+                (parentFragment as NavigationHost).navigateTo(CharacterStatsFragment(isNew), false)
             }
         }
         return view

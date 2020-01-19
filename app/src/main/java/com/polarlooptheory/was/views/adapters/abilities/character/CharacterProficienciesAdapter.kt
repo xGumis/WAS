@@ -8,13 +8,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.RecyclerView
+import com.polarlooptheory.was.MainActivity
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.Settings
+import com.polarlooptheory.was.apiCalls.Abilities
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.model.abilities.mProficiency
 import com.polarlooptheory.was.views.adapters.app.inflate
 import kotlinx.android.synthetic.main.description_abilities.view.*
 import kotlinx.android.synthetic.main.list_row.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class CharacterProficienciesAdapter(private var proficiencyList: List<mProficiency>) : RecyclerView.Adapter<CharacterProficienciesAdapter.Holder>()  {
+class CharacterProficienciesAdapter: RecyclerView.Adapter<CharacterProficienciesAdapter.Holder>()  {
+    private var proficiencyList: MutableList<mProficiency> = mutableListOf()
+    init{
+        refreshList()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflatedView = parent.inflate(R.layout.list_row, false)
         return Holder(
@@ -22,13 +34,24 @@ class CharacterProficienciesAdapter(private var proficiencyList: List<mProficien
         )
     }
 
+    fun refreshList(){
+        proficiencyList.clear()
+        GlobalScope.launch(Dispatchers.Main) {
+        Scenario.dummyCharacter?.abilities?.proficiencies?.forEach {
+                val req =
+                    async { Abilities.getProficiencies(Scenario.connectedScenario.scenario, it) }.await()
+                if(!req.isNullOrEmpty()) proficiencyList.add(req.first())
+            }
+            notifyDataSetChanged()
+        }
+    }
     override fun getItemCount(): Int {
         return proficiencyList.size
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val item = proficiencyList[position]
-        holder.bind(item)
+        holder.bind(item,this)
     }
 
 
@@ -55,9 +78,34 @@ class CharacterProficienciesAdapter(private var proficiencyList: List<mProficien
             }
         }
 
-        fun bind(proficiency: mProficiency){
+        fun bind(proficiency: mProficiency,adapter: CharacterProficienciesAdapter){
             this.proficiency = proficiency
             view.listItemName.text = proficiency.name
+            view.deleteItemButton.setOnClickListener {
+                val character = Scenario.dummyCharacter
+                GlobalScope.launch(Dispatchers.Main) {
+                    if(character!!.abilities.proficiencies.contains(proficiency.name)){
+                        character.abilities.proficiencies -= listOf(proficiency.name)
+                        val req = async{
+                            Scenario.patchCharacterAbilities(
+                                Scenario.connectedScenario.scenario,
+                                character.name,
+                                character.abilities.features,
+                                character.abilities.languages,
+                                character.abilities.proficiencies,
+                                character.abilities.traits
+                            )}.await()
+                        if(req){
+                            (view.context as MainActivity).makeToast("Proficiency deleted")
+                            adapter.refreshList()
+                        }
+                        else{
+                            (view.context as MainActivity).makeToast(Settings.error_message)
+                            Settings.error_message = ""
+                        }
+                    }else (view.context as MainActivity).makeToast("Character doesn't have this proficiency")
+                }
+            }
         }
 
     }

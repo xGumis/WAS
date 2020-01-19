@@ -25,20 +25,10 @@ class VehicleListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mVehicle> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.equipment?.vehicles?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Equipment.getVehicles(Scenario.connectedScenario.scenario, it.first) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            VehicleListAdapter(
-                list
-            )
+            VehicleListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

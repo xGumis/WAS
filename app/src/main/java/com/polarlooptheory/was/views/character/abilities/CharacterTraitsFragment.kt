@@ -26,20 +26,10 @@ class CharacterTraitsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mTrait> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.abilities?.traits?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Abilities.getTraits(Scenario.connectedScenario.scenario, it) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            CharacterTraitsAdapter(
-                list
-            )
+            CharacterTraitsAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

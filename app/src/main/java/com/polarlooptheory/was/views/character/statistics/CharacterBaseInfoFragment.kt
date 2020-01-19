@@ -26,7 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CharacterBaseInfoFragment(private val char: mCharacter?, private val isNew : Boolean) : Fragment() {
+class CharacterBaseInfoFragment(private val isNew : Boolean) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +34,7 @@ class CharacterBaseInfoFragment(private val char: mCharacter?, private val isNew
     ): View? {
         if (Scenario.dummyCharacter == null) Scenario.dummyCharacter = mCharacter()
         val view = inflater.inflate(R.layout.char_base_info, container, false)
+        val char = Scenario.dummyCharacter
         if (char != null) {
             view.formCharName.setText(char.name)
             if (!isNew) {view.formCharName.inputType = InputType.TYPE_NULL;view.formCharName.isFocusable = false}
@@ -146,7 +147,7 @@ class CharacterBaseInfoFragment(private val char: mCharacter?, private val isNew
                     Scenario.dummyCharacter?.equipment?.armorClass = ac.toInt()
                 GlobalScope.launch {
                     (parentFragment as NavigationHost).navigateTo(
-                        CharacterBackgroundFragment(char,isNew),
+                        CharacterBackgroundFragment(isNew),
                         false
                     )
                 }

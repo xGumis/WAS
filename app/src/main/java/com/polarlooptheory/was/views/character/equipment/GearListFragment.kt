@@ -25,21 +25,10 @@ class GearListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.scenario_list, container, false)
-        val list: MutableList<mGear> = mutableListOf()
-        Scenario.connectedScenario.chosenCharacter?.equipment?.gear?.forEach {
-            GlobalScope.launch(Dispatchers.Main) {
-                val req =
-                    async { Equipment.getGears(Scenario.connectedScenario.scenario, it.first) }.await()
-                if(!req.isNullOrEmpty()) list.addAll(req)
-            }
-        }
-
         linearLayoutManager = LinearLayoutManager(activity)
         view.scenarioListRec.layoutManager = linearLayoutManager
         adapter =
-            GearListAdapter(
-                list
-            )
+            GearListAdapter()
         view.scenarioListRec.adapter = adapter
         return view
     }

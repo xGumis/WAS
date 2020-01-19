@@ -25,14 +25,15 @@ import kotlinx.coroutines.launch
 
 class CharacterListFragment() : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: CharacterListAdapter
+    lateinit var adapter: CharacterListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.characters, container, false)
         view.buttonAddChar.setOnClickListener {
-            (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(null,true),true)
+            Scenario.dummyCharacter = null
+            (parentFragment as NavigationHost).navigateTo(CharacterBaseInfoFragment(true),true)
         }
         GlobalScope.launch(Dispatchers.Main) {
             val req = async{Scenario.getCharacters(Scenario.connectedScenario.scenario)}.await()

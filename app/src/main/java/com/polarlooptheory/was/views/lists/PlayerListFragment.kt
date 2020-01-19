@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class PlayerListFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: PlayerListAdapter
+    lateinit var adapter: PlayerListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

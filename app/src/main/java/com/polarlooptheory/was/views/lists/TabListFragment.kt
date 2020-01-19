@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.polarlooptheory.was.R
+import com.polarlooptheory.was.apiCalls.Scenario
 import com.polarlooptheory.was.views.adapters.app.TabListAdapter
 import kotlinx.android.synthetic.main.tab_list.view.*
 
@@ -20,6 +21,7 @@ class TabListFragment(private val tabId: Int) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.tab_list, container, false)
+        Scenario.dummyCharacter = Scenario.connectedScenario.chosenCharacter
         adapter = TabListAdapter(
             childFragmentManager,
             tabId
@@ -29,5 +31,6 @@ class TabListFragment(private val tabId: Int) : Fragment() {
         view.tabs.setupWithViewPager(vp)
         return view
         }
+    
 
 }
